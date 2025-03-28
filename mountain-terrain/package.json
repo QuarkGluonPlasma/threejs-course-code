@@ -1,0 +1,18 @@
+{
+  "name": "mountain-terrain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "simplex-noise": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/three": "^0.174.0"
+  }
+}
