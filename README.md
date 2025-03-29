@@ -8,6 +8,8 @@
 
 [dat.gui 可视化调试](./data-gui/)
 
+[深入理解透视相机和视椎体](./perspective-camera/)
+
 [BufferGeometry：顶点生成几何体](./buffer-geometry/)
 
 [点模型、线模型、网格模型](./point-line-mesh/)
@@ -33,8 +35,6 @@
 ![](./pic/house.gif)
 
 [场景遍历和世界坐标](./scene-group/)
-
-
 
 
 
