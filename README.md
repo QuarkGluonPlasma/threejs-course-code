@@ -36,5 +36,8 @@
 
 [场景遍历和世界坐标](./scene-group/)
 
+[各种灯光和常用 helper](./light-helper/)
+
+[顶点法线和反射原理](./vertex-normal/)
 
 
