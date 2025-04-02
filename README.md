@@ -45,3 +45,5 @@
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
 [射线与点击选中 3D 场景的物体](./ray-caster/)
+
+[后期处理与描边发光效果](./post-processing/)
