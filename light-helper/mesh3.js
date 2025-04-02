@@ -37,9 +37,7 @@ mesh.add(helper);
 
 const f1 = gui.addFolder('聚光灯');
 function onChange() {
-    mesh.remove(helper);
-    helper = new THREE.SpotLightHelper(light);
-    mesh.add(helper);
+    helper.update();
 }
 f1.add(light.position, 'x').min(10).max(1000).onChange(onChange);
 f1.add(light.position, 'y').min(10).max(1000).onChange(onChange);
