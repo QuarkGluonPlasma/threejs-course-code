@@ -22,9 +22,8 @@ scene.add(cameraHelper);
 
 const gui = new GUI();
 function onChange() {
-    scene.remove(cameraHelper);
-    cameraHelper = new THREE.CameraHelper(camera2);
-    scene.add(cameraHelper);
+    camera2.updateProjectionMatrix();
+    cameraHelper.update();
 }
 gui.add(camera2, 'fov', [30, 60, 10]).onChange(onChange);
 gui.add(camera2, 'aspect', {
