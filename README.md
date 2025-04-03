@@ -47,3 +47,6 @@
 [射线与点击选中 3D 场景的物体](./ray-caster/)
 
 [后期处理与描边发光效果](./post-processing/)
+
+[精灵模型 Sprite 和下雪效果](./sprite/)
+
