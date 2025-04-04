@@ -54,3 +54,7 @@
 
 [精灵模型 Sprite 和下雪效果](./sprite/)
 
+[实战：林海雪原](./snowy-forest/)
+
+![](./pic/snowy-forest.gif)
+
