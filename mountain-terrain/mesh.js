@@ -26,7 +26,7 @@ const material = new THREE.MeshBasicMaterial({
 });
 
 const mesh = new THREE.Mesh(geometry, material);
-mesh.rotateX(Math.PI / 2);
+mesh.rotateX(- Math.PI / 2);
 console.log(mesh);
 
 export default mesh;
