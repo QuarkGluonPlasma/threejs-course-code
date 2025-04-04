@@ -44,6 +44,8 @@
 
 [顶点法线和反射原理](./vertex-normal/)
 
+[自定义顶点颜色实现渐变](./geometry-color)
+
 [如何加载外部模型](./gltf-model/)
 
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
