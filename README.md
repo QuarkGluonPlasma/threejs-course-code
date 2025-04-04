@@ -30,6 +30,10 @@
 
 ![](./pic/tube-travel.gif)
 
+[uv 动画实战：无限隧道穿梭](./infinite-tunnel/)
+
+![](./pic/infinate-tunnel.gif)
+
 [实战：盖房子](./house/)
 
 ![](./pic/house.gif)
