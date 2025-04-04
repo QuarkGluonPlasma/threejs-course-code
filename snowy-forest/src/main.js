@@ -47,11 +47,19 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height)
 renderer.shadowMap.enabled = true;
 
+let angle = 0;
+let r = 1000;
 function render() {
+    angle += 0.03;
+
+    camera.position.x = r * Math.cos(angle);
+    camera.position.z = r * Math.sin(angle);
+
+    camera.lookAt(0, 0, 0);
+
     renderer.render(scene, camera);
     requestAnimationFrame(render);
 }
-
 render();
 
 renderer.setClearColor(new THREE.Color('darkblue'));

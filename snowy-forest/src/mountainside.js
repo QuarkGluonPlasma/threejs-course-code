@@ -17,8 +17,31 @@ for (let i = 0 ; i < positions.count; i ++) {
     positions.setZ(i, z);
 }
 
+const heightArr = [];
+for (let i = 0; i < positions.count; i++) {
+    heightArr.push(positions.getZ(i));
+}
+heightArr.sort();
+
+const minHeight = heightArr[0];
+const maxHeight = heightArr[heightArr.length - 1];
+const height = maxHeight - minHeight;
+
+const colorsArr = [];
+const color1 = new THREE.Color('#eee');
+const color2 = new THREE.Color('white');
+
+for (let i = 0; i < positions.count; i++) {
+    const percent = (positions.getZ(i) - minHeight) / height;
+    const c = color1.clone().lerp(color2, percent);
+    colorsArr.push(c.r, c.g, c.b); 
+}
+const colors = new Float32Array(colorsArr);
+geometry.attributes.color = new THREE.BufferAttribute(colors, 3);
+
 const material = new THREE.MeshLambertMaterial({
-    color: new THREE.Color('white'),
+    // color: new THREE.Color('white'),
+    vertexColors:true,
     // wireframe: true
 });
 
