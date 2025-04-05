@@ -60,3 +60,5 @@
 
 ![](./pic/snowy-forest.gif)
 
+[几何体材质共用问题和 copy、clone](./material-share/)
+
