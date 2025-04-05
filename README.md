@@ -48,6 +48,8 @@
 
 [如何加载外部模型](./gltf-model/)
 
+[gltf 的三种文件结构](./gltf-structure/)
+
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
 [射线与点击选中 3D 场景的物体](./ray-caster/)
