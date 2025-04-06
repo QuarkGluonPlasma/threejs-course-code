@@ -69,3 +69,5 @@
 [关键帧动画和模型动画播放](./keyframes-animation/)
 
 [丝滑入场动画](./tube-entry-animation/)
+
+[改变顶点的变形动画](./morph-animation/)
