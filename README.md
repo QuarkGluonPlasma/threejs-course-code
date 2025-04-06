@@ -71,3 +71,5 @@
 [丝滑入场动画](./tube-entry-animation/)
 
 [改变顶点的变形动画](./morph-animation/)
+
+[骨骼动画：关节带动顶点运动](./bone-animation/)
