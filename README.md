@@ -73,3 +73,5 @@
 [改变顶点的变形动画](./morph-animation/)
 
 [骨骼动画：关节带动顶点运动](./bone-animation/)
+
+[CSS2DRenderer 实现标注：给 3D 物体加标签](./css2d-annotation/)
