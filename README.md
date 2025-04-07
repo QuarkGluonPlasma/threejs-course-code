@@ -81,6 +81,8 @@
 
 [CSS2DRenderer 实现标注：给 3D 物体加标签](./css2d-annotation/)
 
+[CSS3DRenderer 实现标注：电视内容、公告栏内容](./css3d-annotation/)
+
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
