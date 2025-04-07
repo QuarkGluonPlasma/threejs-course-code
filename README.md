@@ -83,6 +83,8 @@
 
 [CSS3DRenderer 实现标注：电视内容、公告栏内容](./css3d-annotation/)
 
+[Sprite 结合 canvas 实现各种形状的标注](./canvas-sprite-annotation/)
+
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
