@@ -74,7 +74,6 @@
 
 ![](./pic/entry-animation2.gif)
 
-
 [改变顶点的变形动画](./morph-animation/)
 
 [骨骼动画：关节带动顶点运动](./bone-animation/)
@@ -90,3 +89,5 @@
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
+
+![](./pic/two-dancer2.gif)

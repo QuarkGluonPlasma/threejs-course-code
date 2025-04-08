@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 
 const loader = new GLTFLoader();
 
@@ -15,8 +16,36 @@ loader.load("./stage.glb", function (gltf) {
     });
 });
 
-loadDancer((dancer)=> {}, 200, Math.PI);
+loadDancer((dancer)=> {
+    dancer.name = 'dancer1';
+    dancer.traverse((obj) => {
+        obj.target = dancer;
+    });
+
+    const ele = document.getElementById('dialog');
+    const obj = new CSS2DObject(ele);
+    dancer.add(obj);
+    obj.position.set(1, 0, 0);
+    ele.style.display = 'block';
+    setTimeout(() => {
+        ele.textContent = '谁叫你还搞不清楚我跟你的差别';
+    }, 5000);
+}, 200, Math.PI);
 loadDancer((dancer) => {
+    const ele = document.getElementById('dialog2');
+    const obj = new CSS2DObject(ele);
+    ele.style.display = 'block';
+    dancer.add(obj);
+    obj.position.set(1, 0, 0);
+    setTimeout(() => {
+        ele.textContent = '超人没空给你给你安慰';
+    }, 8000);
+
+
+    dancer.name = 'dancer2';
+    dancer.traverse((obj) => {
+        obj.target = dancer;
+    })
     dancer.traverse(obj => {
         if(obj.isMesh) {
             obj.material = obj.material.clone();

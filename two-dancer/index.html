@@ -5,9 +5,27 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite App</title>
+
+    <style>
+      .dialog {
+        line-height: 40px;
+        text-align: center;
+        font-size: 20px;
+        padding: 10px;
+        border: 1px solid #000;
+        background: #fff;
+        border-radius: 4px;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
+    <div id="dialog" style="display:none;" class="dialog">
+      I'm superman.
+    </div>
+    <div id="dialog2"  style="display:none;" class="dialog">
+      You are loser.
+    </div>
   </body>
 </html>
