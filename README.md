@@ -85,6 +85,8 @@
 
 [Sprite 结合 canvas 实现各种形状的标注](./canvas-sprite-annotation/)
 
+[3D 场景如何加入音频](./audio-api/)
+
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
