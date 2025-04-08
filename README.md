@@ -2,7 +2,9 @@
 
 掘金小册[《Three.js 通关秘籍》](https://juejin.cn/book/7481132169944498226)案例代码 
 
-直接 npx live-server 起个静态服务就可以访问了
+npx live-server 起个静态服务就可以访问
+
+如果是 vite 项目，那就先 npm install 再 npm run dev
 
 [第一个 3D 场景](./first-scene/)
 
