@@ -48,6 +48,10 @@ npx live-server 起个静态服务就可以访问
 
 [自定义顶点颜色实现渐变](./geometry-color)
 
+[实战：颜色渐变柱状图](./gradient-color-bar-chart/)
+
+![](./pic/gradient-color-bar-chart.gif)
+
 [如何加载外部模型](./gltf-model/)
 
 [gltf 的三种文件结构](./gltf-structure/)
