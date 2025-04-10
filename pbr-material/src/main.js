@@ -3,13 +3,13 @@ import * as THREE from 'three';
 import {
     OrbitControls
 } from 'three/addons/controls/OrbitControls.js';
-import mesh from './mesh3.js';
+import mesh from './mesh5.js';
 
 const scene = new THREE.Scene();
 scene.add(mesh);
 
 const textureCube = new THREE.CubeTextureLoader()
-    .setPath('./forest/')
+    .setPath('./city/')
     .load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png']);
 
 scene.background = textureCube;
