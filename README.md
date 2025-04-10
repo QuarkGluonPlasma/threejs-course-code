@@ -100,3 +100,6 @@ npx live-server 起个静态服务就可以访问
 
 [PBR 材质：逼真的金属、塑料、磨砂、喷漆、玻璃效果](./pbr-material/)
 
+[PBR 实战：汽车选配](./car-config/)
+
+
