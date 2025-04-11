@@ -62,6 +62,8 @@ npx live-server 起个静态服务就可以访问
 
 [后期处理与描边发光效果](./post-processing/)
 
+[各种后期处理效果](./all-pass/)
+
 [精灵模型 Sprite 和下雪效果](./sprite/)
 
 [实战：林海雪原](./snowy-forest/)
