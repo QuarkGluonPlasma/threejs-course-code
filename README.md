@@ -104,5 +104,7 @@ npx live-server 起个静态服务就可以访问
 
 [PBR 实战：汽车选配](./car-config/)
 
+[模型搜索和导入 blender 编辑](./model-download-edit/)
+
 [React 和 Three.js 集成](./react-three-app/)
 
