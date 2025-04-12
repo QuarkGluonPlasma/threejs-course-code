@@ -102,6 +102,8 @@ npx live-server 起个静态服务就可以访问
 
 [PBR 材质：逼真的金属、塑料、磨砂、喷漆、玻璃效果](./pbr-material/)
 
+[CubeCamera 实现镜子效果](./cube-camera-envmap/)
+
 [PBR 实战：汽车选配](./car-config/)
 
 [模型搜索和导入 blender 编辑](./model-download-edit/)
