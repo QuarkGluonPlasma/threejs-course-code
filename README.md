@@ -102,13 +102,18 @@ npx live-server 起个静态服务就可以访问
 
 [PBR 材质：逼真的金属、塑料、磨砂、喷漆、玻璃效果](./pbr-material/)
 
-[CubeCamera 实现镜子效果](./cube-camera-envmap/)
-
-[Reflector 实现镜子效果](./reflector-mirror/)
-
 [PBR 实战：汽车选配](./car-config/)
 
 [模型搜索和导入 blender 编辑](./model-download-edit/)
 
+[CubeCamera 实现镜子效果](./cube-camera-envmap/)
+
+[Reflector 实现镜子效果](./reflector-mirror/)
+
+[实战：练舞房](./dancing-mirror/)
+
+![](./pic/dancing-mirror.gif)
+
 [React 和 Three.js 集成](./react-three-app/)
+
 
