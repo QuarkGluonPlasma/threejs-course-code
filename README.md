@@ -104,6 +104,8 @@ npx live-server 起个静态服务就可以访问
 
 [CubeCamera 实现镜子效果](./cube-camera-envmap/)
 
+[Reflector 实现镜子效果](./reflector-mirror/)
+
 [PBR 实战：汽车选配](./car-config/)
 
 [模型搜索和导入 blender 编辑](./model-download-edit/)

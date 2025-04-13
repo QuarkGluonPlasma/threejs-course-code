@@ -36,6 +36,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(width, height)
 
 function render(time) {
+    cubeCamera.position.copy(mesh.children[0].position)
     cubeCamera.update(renderer, scene);
     ballTween.update(time);
     renderer.render(scene, camera);
