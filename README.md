@@ -92,6 +92,8 @@ npx live-server 起个静态服务就可以访问
 
 [Sprite 结合 canvas 实现各种形状的标注](./canvas-sprite-annotation/)
 
+[Canvas 画各种图案作为纹理](./canvas-texture/)
+
 [3D 场景如何加入音频](./audio-api/)
 
 [实战:双人斗舞](./two-dancer/)
@@ -117,6 +119,10 @@ npx live-server 起个静态服务就可以访问
 [实战：练舞房](./dancing-mirror/)
 
 ![](./pic/dancing-mirror.gif)
+
+[3d 音乐播放器](./3d-music-player/)
+
+![](./pic/3d-music-player.gif)
 
 [React 和 Three.js 集成](./react-three-app/)
 
