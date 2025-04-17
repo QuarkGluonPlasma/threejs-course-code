@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Reflector } from 'three/examples/jsm/Addons.js';
 
 const player = new THREE.Group();
 

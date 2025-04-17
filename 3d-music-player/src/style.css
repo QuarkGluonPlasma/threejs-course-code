@@ -1,3 +1,36 @@
 body {
   margin: 0;
 }
+/*
+
+  const simplex = new SimplexNoise();
+
+
+const tweenGroup = new Group();
+let time = 0;
+
+function updatePosition() {
+    group.children.forEach(sprite => {
+        const { x, y, z} = sprite.position;
+        const x2 = x + simplex.noise(x, time) * 100;
+        const y2 = y + simplex.noise(y, time) * 100;
+        const z2 = z + simplex.noise(z, time) * 100;
+
+        const tween= new Tween(sprite.position).to({
+            x: x2,
+            y: y2,
+            z: z2
+        }, 500)
+        .easing(Easing.Quadratic.InOut)
+        .repeat(0)
+        .start()
+        .onComplete(() => {
+            tweenGroup.remove(tween);
+        })
+        tweenGroup.add(tween);
+    });
+}
+const updatePosition2 = throttle(updatePosition, 500);
+
+
+        */

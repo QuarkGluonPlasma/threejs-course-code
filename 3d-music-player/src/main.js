@@ -8,6 +8,7 @@ import analyser from './analyser';
 import _ from 'lodash-es';
 import lyricList, { lyricPositions } from './lyric';
 import { Easing, Group, Tween } from '@tweenjs/tween.js';
+import note from './note';
 
 const listener = new THREE.AudioListener();
 const audio = new THREE.Audio( listener );
@@ -20,12 +21,16 @@ loader.load('./superman.mp3', function ( buffer ) {
 
 const scene = new THREE.Scene();
 
+scene.add(note);
 scene.add(lyricList);
 lyricList.position.y = 650;
 scene.add(player);
 player.position.x = 800;
 player.position.z = 600;
 scene.add(analyser);
+analyser.position.y = -200;
+analyser.scale.z = 0.5;
+analyser.rotateX(Math.PI /8);
 
 const directionLight = new THREE.DirectionalLight(0xffffff, 2);
 directionLight.position.set(500, 400, 300);
@@ -55,12 +60,35 @@ function updateHeight() {
 
   const sumArr = _.map(_.chunk(frequencyData, 50), (arr) => {
     return _.sum(arr);
-  });
+  }).reverse();
 
   for(let i = 0; i< analyser.children.length;i++) {
     const mesh = analyser.children[i];
-    const height = sumArr[i] / 4000;
+    const height = sumArr[i] / 5000;
     mesh.scale.z = height;
+  }
+}
+
+function updateLyricPosition() {
+  if(lyricPositions.length && audio.isPlaying) {
+    let currentTime = costTime + Date.now() - startTime;
+
+    const mSeconds = currentTime;
+    if(i >= lyricPositions.length - 1) {
+      lyricList.position.z = lyricPositions[lyricPositions.length - 1][1];
+    } else if(mSeconds > lyricPositions[i][0] && mSeconds < lyricPositions[i + 1][0]) {
+      const tween= new Tween(lyricList.position).to({
+          z: lyricPositions[i][1] + 300
+      }, 300)
+      .easing(Easing.Quadratic.InOut)
+      .repeat(0)
+      .start()
+      .onComplete(() => {
+          tweenGroup.remove(tween);
+      })
+      tweenGroup.add(tween);
+      i++;
+    }
   }
 }
 
@@ -69,27 +97,7 @@ let startTime = 0;
 const tweenGroup = new Group();
 let i = 0;
 function render() {
-    if(lyricPositions.length && audio.isPlaying) {
-      let currentTime = costTime + Date.now() - startTime;
-  
-      const mSeconds = currentTime;
-      if(i >= lyricPositions.length - 1) {
-        lyricList.position.z = lyricPositions[lyricPositions.length - 1][1];
-      } else if(mSeconds > lyricPositions[i][0] && mSeconds < lyricPositions[i + 1][0]) {
-        const tween= new Tween(lyricList.position).to({
-            z: lyricPositions[i][1] + 300
-        }, 300)
-        .easing(Easing.Quadratic.InOut)
-        .repeat(0)
-        .start()
-        .onComplete(() => {
-            tweenGroup.remove(tween);
-        })
-        tweenGroup.add(tween);
-        i++;
-      }
-    }
-
+    updateLyricPosition();
     tweenGroup.update();
     updateHeight();
     renderer.render(scene, camera);
@@ -127,6 +135,7 @@ renderer.domElement.addEventListener('click', (e) => {
         startTime = Date.now();
         pauseBtn.scale.y = 1;
         pauseBtn.position.y = 0;
+        audio.pause();
         audio.play();
       } else if(obj.name === 'pauseBtn') {
         obj.scale.y = 0.6;
