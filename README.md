@@ -58,6 +58,8 @@ npx live-server 起个静态服务就可以访问
 
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
+[OrbitControl 的常用属性方法](./orbit-controls/)
+
 [射线与点击选中 3D 场景的物体](./ray-caster/)
 
 [后期处理与描边发光效果](./post-processing/)
@@ -125,5 +127,4 @@ npx live-server 起个静态服务就可以访问
 ![](./pic/3d-music-player.gif)
 
 [React 和 Three.js 集成](./react-three-app/)
-
 
