@@ -116,6 +116,8 @@ npx live-server 起个静态服务就可以访问
 
 [MatCap 材质：通过光泽球实现伪光照效果](./matcap-material/)
 
+[HDR：亮度范围更广的全景图](./hdr-background/)
+
 [CubeCamera 实现镜子效果](./cube-camera-envmap/)
 
 [Reflector 实现镜子效果](./reflector-mirror/)
