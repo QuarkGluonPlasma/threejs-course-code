@@ -114,6 +114,8 @@ npx live-server 起个静态服务就可以访问
 
 [模型搜索和导入 blender 编辑](./model-download-edit/)
 
+[MatCap 材质：通过光泽球实现伪光照效果](./matcap-material/)
+
 [CubeCamera 实现镜子效果](./cube-camera-envmap/)
 
 [Reflector 实现镜子效果](./reflector-mirror/)
