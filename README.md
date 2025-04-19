@@ -76,6 +76,8 @@ npx live-server 起个静态服务就可以访问
 
 [补间动画库 Tween.js](./tween-animation/)
 
+[Tween.js 常用 API](./tween-all-feature/)
+
 [关键帧动画和模型动画播放](./keyframes-animation/)
 
 [丝滑入场动画](./tube-entry-animation/)
