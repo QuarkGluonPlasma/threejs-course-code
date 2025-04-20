@@ -104,6 +104,8 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/3d-pie-chart.gif)
 
+[系统掌握噪声库 Simplex Noise](./simplex-noise-test/)
+
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
@@ -137,4 +139,3 @@ npx live-server 起个静态服务就可以访问
 ![](./pic/3d-music-player.gif)
 
 [React 和 Three.js 集成](./react-three-app/)
-
