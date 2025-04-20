@@ -100,6 +100,10 @@ npx live-server 起个静态服务就可以访问
 
 [3D 场景如何加入音频](./audio-api/)
 
+[实战：3D 饼图](./3d-pie-chart/)
+
+![](./pic/3d-pie-chart.gif)
+
 [实战:双人斗舞](./two-dancer/)
 
 ![](./pic/two-dancer1.gif)
