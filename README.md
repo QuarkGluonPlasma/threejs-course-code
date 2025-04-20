@@ -58,6 +58,8 @@ npx live-server 起个静态服务就可以访问
 
 [gltf-pipeline: 处理 gltf 模型的工具](./gltf-pipeline-test/)
 
+[DRACO：压缩 gltf 模型，提升加载性能](./gltf-draco-test/)
+
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
 [OrbitControl 的常用属性方法](./orbit-controls/)
