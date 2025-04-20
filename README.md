@@ -56,6 +56,8 @@ npx live-server 起个静态服务就可以访问
 
 [gltf 的三种文件结构](./gltf-structure/)
 
+[gltf-pipeline: 处理 gltf 模型的工具](./gltf-pipeline-test/)
+
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
 [OrbitControl 的常用属性方法](./orbit-controls/)
