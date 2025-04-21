@@ -142,4 +142,6 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/3d-music-player.gif)
 
+[Three.js 的各种控制器 Controls](./all-controls/)
+
 [React 和 Three.js 集成](./react-three-app/)
