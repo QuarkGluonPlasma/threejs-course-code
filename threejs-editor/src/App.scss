@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+}
+.wrap {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor {
+  flex: 1;
+  
+  display: flex;
+  flex-direction: row;
+
+  .Main {
+    width: 1000px;
+    border-right: 1px solid #000;
+
+    position: relative;
+    .btn-group {
+      width: 100px;
+      height: 200px;
+      position:absolute;
+      left: 0;
+      top:0;
+    }
+  }
+
+  .Properties {
+    flex: 1;
+  }
+}
