@@ -71,10 +71,22 @@ const useThreeStore = create((set, get) => {
 
             ]
         },
+        scene: null,
+        setScene(obj) {
+            set({
+                scene: obj
+            })
+        },
         selectedObj: null,
         setSelectedObj(obj) {
             set({
                 selectedObj: obj
+            })
+        },
+        selectedObjName: null,
+        setSelectedObjName(name) {
+            set({
+                selectedObjName: name
             })
         },
         removeMesh(name) {

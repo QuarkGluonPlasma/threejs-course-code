@@ -129,8 +129,17 @@ export function init(dom, data, onSelected, updateMeshInfo) {
         transformControls.setMode(mode);
     }
 
+    function transformControlsAttachObj(obj) {
+        if(!obj) {
+            transformControls.detach();
+            return;
+        }
+        transformControls.attach(obj);
+    }
+
     return {
         scene,  
-        setTransformControlsMode  
+        setTransformControlsMode,
+        transformControlsAttachObj
     }
 }

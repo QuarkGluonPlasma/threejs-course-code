@@ -6,22 +6,30 @@ import { FloatButton } from "antd";
 import { ArrowsAltOutlined, DragOutlined, RetweetOutlined } from "@ant-design/icons";
 
 function Main() {
-    const { data, addMesh, selectedObj, setSelectedObj, removeMesh, updateMeshInfo } = useThreeStore();
+    const { selectedObjName, setScene, data, addMesh, selectedObj, setSelectedObj, removeMesh, updateMeshInfo } = useThreeStore();
 
     const sceneRef = useRef();
     const transformControlsModeRef = useRef();
+    const transformControlsAttachObjRef = useRef();
 
     function onSelected(obj) {
         setSelectedObj(obj);
     }
 
     useEffect(() => {
+        if(selectedObjName) {
+            const obj = sceneRef.current.getObjectByName(selectedObjName);
+            setSelectedObj(obj);
+            transformControlsAttachObjRef.current(obj);
+        }
+    }, [selectedObjName]);
+
+    useEffect(() => {
         function handleKeydown(e) {
             if(e.key === 'Backspace') {
-                selectedObj?.parent.remove(selectedObj);
-
                 if(selectedObj) {
-                    selectedObj.parent.remove(selectedObj);
+                    transformControlsAttachObjRef.current(null);
+                    sceneRef.current.remove(selectedObj);
                     removeMesh(selectedObj.name);
                 }
             }
@@ -34,11 +42,13 @@ function Main() {
 
     useEffect(() => {
         const dom = document.getElementById('threejs-container');
-        const { scene, setTransformControlsMode } = init(dom, data, onSelected, updateMeshInfo);
+        const { scene, setTransformControlsMode, transformControlsAttachObj } = init(dom, data, onSelected, updateMeshInfo);
 
         sceneRef.current = scene;
         transformControlsModeRef.current = setTransformControlsMode;
+        transformControlsAttachObjRef.current = transformControlsAttachObj;
 
+        setScene(scene);
         return () => {
           dom.innerHTML = '';
         }
@@ -81,13 +91,13 @@ function Main() {
                 mesh.name = item.name;
                 mesh.position.copy(position)
                 mesh.scale.copy(scale)
-                
                 mesh.rotation.x = rotation.x;
                 mesh.rotation.y = rotation.y;
                 mesh.rotation.z = rotation.z;
                 scene.add(mesh);
             }
         })
+        setScene(scene.clone());
     }, [data]);
 
     function setMode(mode) {
