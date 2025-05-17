@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 function createBox() {
     const newId = Math.random().toString().slice(2, 8);
@@ -64,7 +65,7 @@ function createCylinder() {
     }
 }
 
-const useThreeStore = create((set, get) => {
+const useThreeStore = create(persist((set, get) => {
     return {
         data: {
             meshArr: [
@@ -121,6 +122,24 @@ const useThreeStore = create((set, get) => {
                 addItem(createCylinder);
             }
         },
+        updateMaterial(name, info) {
+            set(state => {
+                return {
+                    data: {
+                        ...state.data,
+                        meshArr: state.data.meshArr.map(mesh => {
+                            if(mesh.name === name) {                                
+                                mesh.props.material = {
+                                    ...mesh.props.material,
+                                    ...info
+                                }
+                            }
+                            return mesh;
+                        })
+                    }
+                }
+            })
+        },
         updateMeshInfo(name, info, type) {
             set(state => {
                 return {
@@ -147,6 +166,8 @@ const useThreeStore = create((set, get) => {
             })
         }
     }
+}), {
+    name: 'xxx'
 });
 
 const MeshTypes = {

@@ -76,6 +76,8 @@ function Main() {
                 mesh.rotation.x = rotation.x;
                 mesh.rotation.y = rotation.y;
                 mesh.rotation.z = rotation.z;
+
+                mesh.material.color = new THREE.Color(color);
                 scene.add(mesh);
             } else if(item.type === MeshTypes.Cylinder) {
                 const { radiusTop, radiusBottom, height, material: { color }, position,scale,rotation} = item.props;
@@ -94,6 +96,9 @@ function Main() {
                 mesh.rotation.x = rotation.x;
                 mesh.rotation.y = rotation.y;
                 mesh.rotation.z = rotation.z;
+
+                mesh.material.color = new THREE.Color(color);
+
                 scene.add(mesh);
             }
         })

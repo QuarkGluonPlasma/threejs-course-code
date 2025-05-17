@@ -148,3 +148,6 @@ npx live-server 起个静态服务就可以访问
 
 [Three.js Editor](./threejs-editor/)
 
+![](./pic/threejs-editor1.gif)
+
+![](./pic/threejs-editor2.gif)
