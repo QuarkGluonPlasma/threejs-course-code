@@ -151,3 +151,5 @@ npx live-server 起个静态服务就可以访问
 ![](./pic/threejs-editor1.gif)
 
 ![](./pic/threejs-editor2.gif)
+
+[酷家乐装修编辑器](./home-decoration-editor/)

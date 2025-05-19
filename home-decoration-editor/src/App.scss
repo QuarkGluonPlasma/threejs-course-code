@@ -1,0 +1,59 @@
+body {
+  margin: 0;
+}
+
+.wrap {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .Header {
+    height: 60px;
+    border-bottom: 1px solid #000;
+  }
+
+  .editor {
+    flex: 1;
+
+    position: relative;
+
+    .drawer-bar {
+      width: 10px;
+      height: 80px;
+      background: black;
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor:pointer;
+    }
+    .Properties {
+      .drawer-bar {
+        left: -10px;
+      }
+    }
+
+    .Menu,.Properties {
+      position: absolute;
+      top: 0;
+      width: 300px;
+      height: calc(100vh - 60px);
+      background: pink;
+
+      transition: left 0.5s ease-in-out,right 0.5s ease-in-out;
+    }
+    .Menu {
+      left: 0;
+      border-right: 1px solid #000;
+    }
+    .Properties {
+      right: 0;
+      background: orange;
+      border-left: 1px solid #000;
+    }
+  }
+}
+
+
+
+
