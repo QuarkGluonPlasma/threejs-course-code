@@ -153,3 +153,5 @@ npx live-server 起个静态服务就可以访问
 ![](./pic/threejs-editor2.gif)
 
 [酷家乐装修编辑器](./home-decoration-editor/)
+
+[物理引擎 cannon：实现真实世界的物理现象](./cannon-world/)
