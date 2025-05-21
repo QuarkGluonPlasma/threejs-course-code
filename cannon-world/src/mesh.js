@@ -58,6 +58,7 @@ function render() {
     world.fixedStep();
 
     box.position.copy(boxBody.position);
+    box.quaternion.copy(boxBody.quaternion);
 
     requestAnimationFrame(render);
 }
