@@ -102,6 +102,10 @@ npx live-server 起个静态服务就可以访问
 
 [SpriteText：开箱即用的文字组件](./sprite-text-test/)
 
+[实战：数字雨](./number-rain)
+
+![](./pic/number-rain.gif)
+
 [Canvas 画各种图案作为纹理](./canvas-texture/)
 
 [3D 场景如何加入音频](./audio-api/)
