@@ -170,3 +170,6 @@ npx live-server 起个静态服务就可以访问
 
 [粒子效果库 three-quraks](./three-quarks-test/)
 
+[粒子实战：小猪爱心喷射器](./pig-heart-emmiter/)
+
+![](./pic/pig-heart-emitter.gif)
