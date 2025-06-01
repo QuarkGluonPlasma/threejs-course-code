@@ -173,3 +173,6 @@ npx live-server 起个静态服务就可以访问
 [粒子实战：小猪爱心喷射器](./pig-heart-emmiter/)
 
 ![](./pic/pig-heart-emitter.gif)
+
+[各种形状的粒子发射器](./all-shape-three-quarks/)
+
