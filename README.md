@@ -178,5 +178,9 @@ npx live-server 起个静态服务就可以访问
 
 [粒子生命周期行为控制](./three-quarks-behavior-control/)
 
+[粒子实战：火树银花](./three-quarks-fireworks/)
+
+![](./pic/three-quarks-fireworks.gif)
+
 
 
