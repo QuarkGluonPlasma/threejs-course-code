@@ -9,24 +9,12 @@ function Properties() {
 
     const [treeData, setTreeData] = useState();
     useEffect(() => {
-        if(scene?.children) {
-            const tree = scene.children.map(item => {
-                if(item.isTransformControlsRoot) {
-                    return null;
-                }
-
-                return {
-                    title: item.isMesh ?  item.geometry.type : item.type,
-                    key: item.type + item.name + item.id,
-                    name: item.name
-                }
-            }).filter(item => item !== null);
-
+        if(scene) {
             setTreeData([
                 {
                     title: 'Scene',
                     key: 'root',
-                    children: tree
+                    children: scene
                 }
             ]);
         }
