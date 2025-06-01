@@ -176,3 +176,7 @@ npx live-server 起个静态服务就可以访问
 
 [各种形状的粒子发射器](./all-shape-three-quarks/)
 
+[粒子生命周期行为控制](./three-quarks-behavior-control/)
+
+
+
