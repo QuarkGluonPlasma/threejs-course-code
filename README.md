@@ -167,3 +167,6 @@ npx live-server 起个静态服务就可以访问
 [物理引擎 cannon：实现真实世界的物理现象](./cannon-world/)
 
 [物理引擎 cannon：凸多面体实现各种形状](./cannon-world/)
+
+[粒子效果库 three-quraks](./three-quarks-test/)
+
