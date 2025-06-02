@@ -186,5 +186,6 @@ npx live-server 起个静态服务就可以访问
 
 [粒子的帧动画](./three-quarks-frame-animation/)
 
+[粒子实战：小鱼吐泡泡](./fish-bubbles/)
 
-
+![](./pic/fish-bubbles.gif)
