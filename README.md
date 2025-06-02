@@ -184,5 +184,7 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/three-quarks-fireworks.gif)
 
+[粒子的帧动画](./three-quarks-frame-animation/)
+
 
 
