@@ -62,6 +62,8 @@ npx live-server 起个静态服务就可以访问
 
 [包围盒与模型大小计算](./box3-test/)
 
+[包围盒 Box3 常用 api](./box3-api/)
+
 [正投影相机和 3 种灯光的阴影](./orthographic-camera-shadow/)
 
 [OrbitControl 的常用属性方法](./orbit-controls/)
