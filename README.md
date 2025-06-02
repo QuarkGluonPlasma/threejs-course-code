@@ -189,3 +189,7 @@ npx live-server 起个静态服务就可以访问
 [粒子实战：小鱼吐泡泡](./fish-bubbles/)
 
 ![](./pic/fish-bubbles.gif)
+
+[打碎重组粒子效果](./three-quarks-texture-sequencer/)
+
+![](./pic/three-quarks-texture-sequencer.gif)
