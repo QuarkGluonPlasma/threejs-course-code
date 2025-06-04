@@ -193,3 +193,9 @@ npx live-server 起个静态服务就可以访问
 [打碎重组粒子效果](./three-quarks-texture-sequencer/)
 
 ![](./pic/three-quarks-texture-sequencer.gif)
+
+[躲避汽车](./dodge-cars/)
+
+![](./pic/dodge-cars1.gif)
+
+![](./pic/dodge-cars2.gif)
