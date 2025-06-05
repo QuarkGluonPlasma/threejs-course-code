@@ -194,8 +194,11 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/three-quarks-texture-sequencer.gif)
 
+[几何体粒子和噪声](./three-quarks-mesh-noise/)
+
 [躲避汽车](./dodge-cars/)
 
 ![](./pic/dodge-cars1.gif)
 
 ![](./pic/dodge-cars2.gif)
+
