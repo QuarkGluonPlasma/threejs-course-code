@@ -158,6 +158,8 @@ npx live-server 起个静态服务就可以访问
 
 [React 和 Three.js 集成](./react-three-app/)
 
+[贴花几何体：给物体表面添加装饰](./decal-geometry/)
+
 [Three.js Editor](./threejs-editor/)
 
 ![](./pic/threejs-editor1.gif)
