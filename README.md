@@ -160,6 +160,12 @@ npx live-server 起个静态服务就可以访问
 
 [贴花几何体：给物体表面添加装饰](./decal-geometry/)
 
+[T恤印花设计](./t-shirt-design/)
+
+![](./pic/tshirt-design1.gif)
+
+![](./pic/tshirt-design2.gif)
+
 [Three.js Editor](./threejs-editor/)
 
 ![](./pic/threejs-editor1.gif)

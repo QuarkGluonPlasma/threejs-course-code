@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+}
+#main {
+  position: relative;
+}
+#operate {
+  position: absolute;
+  left: 100px;
+  top: 200px;
+
+  color: white;
+  .ant-radio-label{
+    color: white;
+  }
+
+  .ope-item {
+    padding: 10px 0;
+
+    display: flex;
+    width: 200px;
+
+    >div:first-child {
+      padding-right: 20px;
+    }
+  }
+}
