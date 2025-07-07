@@ -1,0 +1,54 @@
+body {
+  margin: 0;
+}
+
+#desktop {
+  width: 600px;
+  height: 1100px;
+  background: pink;
+  backface-visibility: hidden;
+  position: relative;
+}
+#desktop .bg {
+  position: absolute;
+  left: -250px;
+  top: 250px;
+  width: 1100px;
+  height: 600px;
+  rotate: -90deg;
+}
+#desktop .app {
+  position: absolute;
+  left: 50px;
+  top: 900px;
+  width: 100px;
+  height: 100px;
+  rotate: -90deg;
+  /* border: 1px solid blue; */
+}
+#desktop .app:hover {
+  background:lightblue;
+}
+
+
+#desktop .app .logo{
+  width: 50px;
+  height: 50px;
+  background: url(./chrome.png);
+  background-size: cover;
+  translate: 50% 0;
+}
+
+#desktop .app .name{
+  font-size: 30px;
+  color: white;
+}
+
+#desktop .browser {
+  width: 900px;
+  height: 600px;
+  position: absolute;
+  left: -150px;
+  top: 250px;
+  rotate: -90deg;
+}
