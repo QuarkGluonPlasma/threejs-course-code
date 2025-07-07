@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "antd": "^5.25.1",
+    "@ant-design/icons": "^6.0.0",
+    "antd": "^5.26.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "three": "^0.176.0"
+    "three": "^0.176.0",
+    "three-spritetext": "^1.10.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

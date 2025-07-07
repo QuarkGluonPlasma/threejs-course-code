@@ -15,6 +15,28 @@ body {
   .editor {
     flex: 1;
 
+    .Main {
+      position: relative;
+      height: calc(100vh - 60px);
+      #threejs-3d-container {
+        position: absolute;
+        z-index: 2;
+        right: 0;
+      }
+      #threejs-2d-container {
+        position: absolute;
+        z-index: 1;
+        right: 0;
+      }
+      
+      .mode-change-btns {
+        position: absolute;
+        z-index: 3;
+        bottom: 20px;
+        left: 320px;
+      }
+    }
+
     position: relative;
 
     .drawer-bar {
@@ -36,9 +58,10 @@ body {
     .Menu,.Properties {
       position: absolute;
       top: 0;
+      z-index: 10;
       width: 300px;
       height: calc(100vh - 60px);
-      background: pink;
+      background: white;
 
       transition: left 0.5s ease-in-out,right 0.5s ease-in-out;
     }
