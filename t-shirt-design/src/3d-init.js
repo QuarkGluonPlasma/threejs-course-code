@@ -4,6 +4,7 @@ import {
 } from 'three/addons/controls/OrbitControls.js';
 import mesh from './mesh';
 import { DecalGeometry } from 'three/examples/jsm/Addons.js';
+import gsap from 'gsap';
 
 export function init(dom) {
 
@@ -101,11 +102,53 @@ export function init(dom) {
         texture.colorSpace = THREE.SRGBColorSpace;
     }
 
+    function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadImg() {
+        renderer.render(scene, camera);
+        renderer.domElement.toBlob((blob) => {
+            if (blob) {
+                downloadBlob(blob, 'design.png');
+            }
+        }, "image/png");
+    }
+
+    function downloadVideo() {
+        const stream = renderer.domElement.captureStream(60);
+        const recorder = new MediaRecorder(stream);
+        recorder.start();
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            downloadBlob(event.data, `design.webm`);
+          }
+        };
+        
+        gsap.to(scene.rotation, {
+            y: Math.PI * 2,
+            duration: 3,
+            onComplete() {
+                scene.rotation.y = 0;
+                recorder.stop();
+            }
+        });
+    }
+
     return {
         scene,
         renderer,
         controls,
         changeTShirtColor,
-        changeTexture
+        changeTexture,
+        downloadImg,
+        downloadVideo
     }
 }

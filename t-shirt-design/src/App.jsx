@@ -1,19 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { init } from './3d-init'
 import './App.scss'
-import { ColorPicker } from 'antd';
+import { Button, ColorPicker } from 'antd';
 import { Radio } from 'antd';
 
 function App() {
 
   const changeTShirtColorRef = useRef();
   const changeTextureRef = useRef();
+  const downloadImgRef = useRef();
+  const downloadVideoRef = useRef();
 
   useEffect(() => {
     const dom = document.getElementById('content');
-    const { scene,changeTShirtColor, changeTexture } = init(dom);
+    const { scene,changeTShirtColor, changeTexture, downloadImg, downloadVideo } = init(dom);
     
     changeTShirtColorRef.current = changeTShirtColor;
+    downloadImgRef.current = downloadImg;
+    downloadVideoRef.current = downloadVideo;
     changeTextureRef.current = changeTexture;
 
     return () => {
@@ -44,6 +48,10 @@ function App() {
               <Radio value={'./heart.png'}>爱心</Radio>
             </Radio.Group>
           </div>
+        </div>
+        <div className='ope-item'>
+          <Button type='primary' onClick={() => downloadImgRef.current()}>保存为图片</Button>
+          <Button type='default' onClick={() => downloadVideoRef.current()}>保存为视频</Button>
         </div>
       </div>
     </div>
