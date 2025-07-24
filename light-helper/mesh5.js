@@ -31,6 +31,9 @@ export const light = new THREE.RectAreaLight( new THREE.Color('red'), 20,  100, 
 light.position.set(400, 500, 300);
 light.lookAt(0, 0, 0);
 
+const ambientLight2 = new THREE.AmbientLight(0xffffff, 0.4);
+mesh.add(ambientLight2);
+
 const helper = new RectAreaLightHelper(light);
 mesh.add(helper);
 

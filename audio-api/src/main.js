@@ -10,7 +10,7 @@ const listener = new THREE.AudioListener();
 const audio = new THREE.Audio( listener );
 
 const loader = new THREE.AudioLoader();
-loader.load('./superman.mp3', function ( buffer ) {
+loader.load('../public/superman.mp3', function ( buffer ) {
   audio.setBuffer( buffer );
 });
 

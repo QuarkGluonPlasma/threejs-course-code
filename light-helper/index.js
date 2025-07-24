@@ -5,7 +5,7 @@ import {
 import { mesh, light } from './mesh5.js';
 
 const scene = new THREE.Scene();
-// scene.add(mesh, light);
+scene.add(mesh, light);
 
 // const helper = new THREE.PolarGridHelper( 500, 10, 5, 64 );
 const helper = new THREE.PolarGridHelper( 500, 5, 20, 8 );
@@ -39,6 +39,7 @@ camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(width, height)
+renderer.shadowMap.enabled = true;
 
 function render() {
     renderer.render(scene, camera);

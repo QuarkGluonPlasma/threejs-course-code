@@ -6,7 +6,7 @@ const tree = new THREE.Group();
 const loader = new GLTFLoader();
 
 function loadTree(callback) {
-    loader.load('./tree/tree.gltf', gltf => {
+    loader.load('../public/tree/tree.gltf', gltf => {
         console.log(gltf);
     
         gltf.scene.scale.set(10, 10, 10);

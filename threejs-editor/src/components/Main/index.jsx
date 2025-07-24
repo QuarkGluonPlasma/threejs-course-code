@@ -48,19 +48,7 @@ function Main() {
         transformControlsModeRef.current = setTransformControlsMode;
         transformControlsAttachObjRef.current = transformControlsAttachObj;
 
-        const tree = scene.children.map(item => {
-            if(item.isTransformControlsRoot) {
-                return null;
-            }
-
-            return {
-                title: item.isMesh ?  item.geometry.type : item.type,
-                key: item.type + item.name + item.id,
-                name: item.name
-            }
-        }).filter(item => item !== null);
-
-        setScene(tree);
+        setScene(scene);
         return () => {
           dom.innerHTML = '';
         }
@@ -114,20 +102,7 @@ function Main() {
                 scene.add(mesh);
             }
         })
-        
-        const tree = scene.children.map(item => {
-            if(item.isTransformControlsRoot) {
-                return null;
-            }
-
-            return {
-                title: item.isMesh ?  item.geometry.type : item.type,
-                key: item.type + item.name + item.id,
-                name: item.name
-            }
-        }).filter(item => item !== null);
-
-        setScene(tree);
+        setScene(scene.clone());
     }, [data]);
 
     function setMode(mode) {

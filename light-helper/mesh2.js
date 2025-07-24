@@ -36,9 +36,9 @@ mesh.add(ambientLight);
 const helper = new THREE.PointLightHelper(light, 100);
 mesh.add(helper);
 
-const f1 = gui.addFolder('点光源');
-f1.add(light.position, 'x').min(10).max(1000);
-f1.add(light.position, 'y').min(10).max(1000);
-f1.add(light.position, 'z').min(10).max(1000);
-f1.add(light, 'intensity');
+// const f1 = gui.addFolder('点光源');
+// f1.add(light.position, 'x').min(10).max(1000);
+// f1.add(light.position, 'y').min(10).max(1000);
+// f1.add(light.position, 'z').min(10).max(1000);
+// f1.add(light, 'intensity');
 

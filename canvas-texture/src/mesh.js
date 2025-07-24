@@ -86,7 +86,7 @@ function createCanvas4() {
 }
 
 function createPlane(x, y, img) {
-    const texture = new THREE.CanvasTexture(createCanvas4(img));
+    const texture = new THREE.CanvasTexture(createCanvas(img));
     texture.colorSpace = THREE.SRGBColorSpace;
     const geometry = new THREE.PlaneGeometry(100, 100);
     const material = new THREE.MeshPhongMaterial({
@@ -100,7 +100,7 @@ function createPlane(x, y, img) {
 }
 
 const img = new Image();
-img.src = './heart.png';
+img.src = '../public/heart.png';
 img.onload = function() {
     group.add(createPlane(-300, 0, img));
     group.add(createPlane(0, 0, img));

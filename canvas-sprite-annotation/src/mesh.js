@@ -41,7 +41,7 @@ function createCanvas(text, img) {
 }
 
 const img = new Image();
-img.src = './heart.png';
+img.src = '../public/heart.png';
 img.onload = function() {
     const texture = new THREE.CanvasTexture(createCanvas('aaa', img));
 

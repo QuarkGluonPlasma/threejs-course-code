@@ -21,7 +21,7 @@ loader.load("./Horse.gltf", function (gltf) {
     });
 
     const obj = gltf.scene.getObjectByName('Cylinder');
-    // obj.material.wireframe = true;
+    obj.material.wireframe = true;
     obj.material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         wireframe: true
