@@ -9,7 +9,7 @@ export function init2D(dom: HTMLElement, updateFurniture: Action['updateFurnitur
     const scene = new THREE.Scene();
 
     const axesHelper = new THREE.AxesHelper(50000);
-    scene.add(axesHelper);
+    // scene.add(axesHelper);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff);
     directionalLight.position.set(500, 400, 300);
