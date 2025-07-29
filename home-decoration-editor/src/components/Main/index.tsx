@@ -7,11 +7,24 @@ import * as THREE from 'three';
 import { DRACOLoader, GLTFLoader, OrbitControls } from "three/examples/jsm/Addons.js";
 import SpriteText from "three-spritetext";
 import { useDrop } from "react-dnd";
+import { modelMap } from "../../App";
 
-async function loadWindow() {
+let loaderCache: GLTFLoader;
+export function getGLTFLoader() {
+    if(!loaderCache) {
+        const gltfLoader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
+        gltfLoader.setDRACOLoader(dracoLoader);
+        loaderCache = gltfLoader;
+    }
+    return loaderCache;
+}
+
+export async function loadWindow() {
     const group = new THREE.Group();
-    const loader = new GLTFLoader();
-    const gltf = await loader.loadAsync("./window.glb");
+    const gltf = await modelMap['./window.glb'];
+    gltf.scene = gltf.scene.clone();
     group.add(gltf.scene);
     
     const box = new THREE.Box3();
@@ -24,10 +37,10 @@ async function loadWindow() {
     };
 }
 
-async function loadDoor() {
+export async function loadDoor() {
     const group = new THREE.Group();
-    const loader = new GLTFLoader();
-    const gltf = await loader.loadAsync("./door.glb");
+    const gltf = await modelMap['./door.glb'];
+    gltf.scene = gltf.scene.clone();
     group.add(gltf.scene);
     
     const box = new THREE.Box3();
@@ -41,7 +54,7 @@ async function loadDoor() {
 }
 
 const textureLoader = new THREE.TextureLoader();
-const floorTexture = textureLoader.load('./floor-texture.png');
+export const floorTexture = textureLoader.load('./floor-texture.png');
 floorTexture.colorSpace = THREE.SRGBColorSpace;
 floorTexture.wrapS =  THREE.RepeatWrapping;
 floorTexture.wrapT =  THREE.RepeatWrapping;
@@ -149,13 +162,11 @@ function Main() {
                     obj.rotation.y = furniture.rotation.y;
                     obj.rotation.z = furniture.rotation.z;
                 } else {
-                    const gltfLoader = new GLTFLoader();
-                    const dracoLoader = new DRACOLoader();
-                    dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
-                    gltfLoader.setDRACOLoader(dracoLoader);
+                    
                     const furnitures = houseObj.getObjectByName('furnitures')!;
 
-                    gltfLoader.load(furniture.modelUrl, (gltf) => {
+                    modelMap[furniture.modelUrl].then(gltf => { 
+                        gltf.scene = gltf.scene.clone();
                         furnitures.add(gltf.scene);
 
                         gltf.scene.scale.setScalar(furniture.modelScale || 1);
@@ -320,11 +331,8 @@ function Main() {
         const furnitures = new THREE.Group();
         furnitures.name = 'furnitures';
         data.furnitures.forEach(furniture => {
-            const gltfLoader = new GLTFLoader();
-            const dracoLoader = new DRACOLoader();
-            dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
-            gltfLoader.setDRACOLoader(dracoLoader);
-            gltfLoader.load(furniture.modelUrl, (gltf) => {
+            modelMap[furniture.modelUrl].then(gltf => {
+                gltf.scene = gltf.scene.clone();
                 furnitures.add(gltf.scene);
 
                 gltf.scene.scale.setScalar(furniture.modelScale || 1);
@@ -343,7 +351,7 @@ function Main() {
                     (obj as any).target = gltf.scene;
                 });
                 gltf.scene.name = furniture.id
-            });
+            })
         })
         house.add(furnitures);
 
@@ -387,13 +395,10 @@ function Main() {
                     obj.rotation.y = furniture.rotation.y;
                     obj.rotation.z = furniture.rotation.z;
                 } else {
-                    const gltfLoader = new GLTFLoader();
-                    const dracoLoader = new DRACOLoader();
-                    dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
-                    gltfLoader.setDRACOLoader(dracoLoader);
                     const furnitures = houseObj.getObjectByName('furnitures')!;
 
-                    gltfLoader.load(furniture.modelUrl, (gltf) => {
+                    modelMap[furniture.modelUrl].then(gltf => { 
+                        gltf.scene = gltf.scene.clone();
                         furnitures.add(gltf.scene);
 
                         gltf.scene.scale.setScalar(furniture.modelScale || 1);
@@ -599,11 +604,8 @@ function Main() {
         const furnitures = new THREE.Group();
         furnitures.name = 'furnitures';
         data.furnitures.forEach(furniture => {
-            const gltfLoader = new GLTFLoader();
-            const dracoLoader = new DRACOLoader();
-            dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' );
-            gltfLoader.setDRACOLoader(dracoLoader);
-            gltfLoader.load(furniture.modelUrl, (gltf) => {
+            modelMap[furniture.modelUrl].then(gltf => { 
+                gltf.scene = gltf.scene.clone();
                 furnitures.add(gltf.scene);
 
                 gltf.scene.scale.setScalar(furniture.modelScale || 1);
