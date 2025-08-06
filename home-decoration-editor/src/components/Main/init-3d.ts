@@ -8,7 +8,8 @@ import type { Action } from '../../store';
 export function init3D(
     dom: HTMLElement,
     wallsVisibilityCalc: Function,
-    updateFurniture: Action['updateFurniture']
+    updateFurniture: Action['updateFurniture'],
+    setCurSelectedFurniture: Action['setCurSelectedFurniture']
 ) {
     const scene = new THREE.Scene();
 
@@ -119,27 +120,29 @@ export function init3D(
             const obj = intersections2[0].object as any;
             if(obj.target) {
                 transformControls.attach(obj.target);
+                setCurSelectedFurniture(obj.target.name);
             }
         } else {
             transformControls.detach();
+            setCurSelectedFurniture('');
         }
 
-        edges.forEach(item => {
-            item.parent?.remove(item);
-        })
-        if(intersections.length) {
-            let obj = intersections[0].object as THREE.Mesh;
+        // edges.forEach(item => {
+        //     item.parent?.remove(item);
+        // })
+        // if(intersections.length) {
+        //     let obj = intersections[0].object as THREE.Mesh;
 
-            if(obj.isMesh) {
-                const geometry = new THREE.EdgesGeometry(obj.geometry);
-                const material = new THREE.LineBasicMaterial({ 
-                    color: 'blue' 
-                });
-                const line = new THREE.LineSegments(geometry, material);
-                obj.add(line);
-                edges.push(line);
-            }
-        }
+        //     if(obj.isMesh) {
+        //         const geometry = new THREE.EdgesGeometry(obj.geometry);
+        //         const material = new THREE.LineBasicMaterial({ 
+        //             color: 'blue' 
+        //         });
+        //         const line = new THREE.LineSegments(geometry, material);
+        //         obj.add(line);
+        //         edges.push(line);
+        //     }
+        // }
     });
 
     function changeMode(isTranslate: boolean) {
@@ -176,11 +179,16 @@ export function init3D(
         }
     }
 
+    function detachTransformControls() {
+        transformControls.detach();
+    }
+
     return {
         scene,
         camera,
         changeMode,
         changeSize,
-        controls
+        controls,
+        detachTransformControls
     }
 }

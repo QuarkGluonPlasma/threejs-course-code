@@ -5,7 +5,11 @@ import {
 import { MapControls, TransformControls } from 'three/examples/jsm/Addons.js';
 import type { Action } from '../../store';
 
-export function init2D(dom: HTMLElement, updateFurniture: Action['updateFurniture']) {
+export function init2D(
+    dom: HTMLElement,
+    updateFurniture: Action['updateFurniture'],
+    setCurSelectedFurniture: Action['setCurSelectedFurniture']
+) {
     const scene = new THREE.Scene();
 
     const axesHelper = new THREE.AxesHelper(50000);
@@ -110,9 +114,11 @@ export function init2D(dom: HTMLElement, updateFurniture: Action['updateFurnitur
             const obj = intersections2[0].object as any;
             if(obj.target) {
                 transformControls.attach(obj.target);
+                setCurSelectedFurniture(obj.target.name);
             }
         } else {
             transformControls.detach();
+            setCurSelectedFurniture('');
         }
     });
 
@@ -151,9 +157,14 @@ export function init2D(dom: HTMLElement, updateFurniture: Action['updateFurnitur
         }
     }
 
+    function detachTransformControls() {
+        transformControls.detach();
+    }
+
     return {
         scene,
         changeMode,
-        changeSize
+        changeSize,
+        detachTransformControls
     }
 }

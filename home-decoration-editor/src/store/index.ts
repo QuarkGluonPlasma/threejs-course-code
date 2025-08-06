@@ -1,6 +1,6 @@
 import { create, type StateCreator } from "zustand";
 import data from "./house2";
-import type { Vector3 } from "three";
+import type { Object3D, Vector3 } from "three";
 import { persist } from "zustand/middleware";
 
 interface Wall {
@@ -69,7 +69,8 @@ export interface State {
         ceilings: Array<Ceiling>,
         furnitures: Array<Furniture>
     },
-    showPreview: boolean
+    showPreview: boolean,
+    curSelectedFurniture: Furniture | null
 }
 
 export interface Action {
@@ -77,6 +78,8 @@ export interface Action {
     updateFurniture(id: string, type: 'position' | 'rotation', info: Vector3): void;
     addFurniture(furniture: Furniture): void;
     toggleShowPreview(): void;
+    deleteFurniture(id: string): void;
+    setCurSelectedFurniture(furnitureId: string): void;
 }
 
 const stateCreator: StateCreator<State & Action> = (set, get) => {
@@ -134,6 +137,32 @@ const stateCreator: StateCreator<State & Action> = (set, get) => {
                             furniture
                         ]
                     }
+                }
+            })
+        },
+        deleteFurniture(id) {
+            set(state => {
+                return {
+                    ...state,
+                    data: {
+                        ...state.data,
+                        furnitures: state.data.furnitures.filter(item => {
+                            return item.id !== id
+                        })
+                    }
+                }
+            })
+        },
+        curSelectedFurniture: null,
+        setCurSelectedFurniture(furnitureId) {
+            set(state => {
+                const found = state.data.furnitures.filter((item)=> {
+                    return item.id === furnitureId;
+                });
+
+                return {
+                    ...state,
+                    curSelectedFurniture: found.length ? found[0] : null
                 }
             })
         }

@@ -71,10 +71,12 @@ function Main() {
     const changeSize3DRef = useRef<(isBig: boolean) => void>(null);
     const changeSize2DRef = useRef<(isBig: boolean) => void>(null);
     const controls3DRef = useRef<OrbitControls>(null);
+    const detachTransformControls3DRef = useRef<() => void>(null);
+    const detachTransformControls2DRef = useRef<() => void>(null);
 
     const [curMode, setCurMode] = useState('2d');
 
-    const { data, updateFurniture, addFurniture } = useHouseStore();
+    const { data, updateFurniture, addFurniture, setCurSelectedFurniture,curSelectedFurniture, deleteFurniture } = useHouseStore();
 
     const dataRef = useRef<State['data']>(null);
     dataRef.current = data;
@@ -103,14 +105,50 @@ function Main() {
     }
 
     useEffect(() => {
+        const scene = scene3DRef.current!;
+        const scene2D = scene2DRef.current!;
+        function handleKeydown(e: KeyboardEvent) {
+            if(e.key === 'Backspace') {
+                if(curSelectedFurniture) {
+                    const furniture = scene.getObjectByName(curSelectedFurniture.id);
+
+                    if(furniture) {
+                        furniture.parent?.remove(furniture);
+                        deleteFurniture(furniture.name);
+                        setCurSelectedFurniture('');
+                        detachTransformControls3DRef.current?.();
+                    }
+                    const furniture2D = scene2D.getObjectByName(curSelectedFurniture.id);
+                    if(furniture2D) {
+                        furniture2D.parent?.remove(furniture2D);
+                        detachTransformControls2DRef.current?.();
+                    }
+
+                }
+            }
+        }
+        window.addEventListener('keydown', handleKeydown);
+        return () => {
+            window.removeEventListener('keydown', handleKeydown);
+        }
+    }, [curSelectedFurniture]);
+
+
+    useEffect(() => {
         const dom = document.getElementById('threejs-3d-container')!;
-        const { scene, camera, changeMode, changeSize, controls } = init3D(dom, wallsVisibilityCalc, updateFurniture);
+        const { scene, camera, changeMode, changeSize, controls, detachTransformControls } = init3D(
+            dom,
+            wallsVisibilityCalc,
+            updateFurniture,
+            setCurSelectedFurniture
+        );
 
         scene3DRef.current = scene;
         camera3DRef.current = camera;
         changeModeRef.current = changeMode;
         changeSize3DRef.current = changeSize;
         controls3DRef.current = controls;
+        detachTransformControls3DRef.current = detachTransformControls;
           
         return () => {
           dom.innerHTML = '';
@@ -359,11 +397,12 @@ function Main() {
 
     useEffect(() => {
         const dom = document.getElementById('threejs-2d-container')!;
-        const { scene, changeMode, changeSize } = init2D(dom, updateFurniture);
+        const { scene, changeMode, changeSize, detachTransformControls } = init2D(dom, updateFurniture, setCurSelectedFurniture);
         
         scene2DRef.current = scene;
         changeMode2DRef.current = changeMode;
         changeSize2DRef.current = changeSize;
+        detachTransformControls2DRef.current = detachTransformControls;
 
         return () => {
           dom.innerHTML = '';
@@ -392,7 +431,7 @@ function Main() {
                     );
                     
                     obj.rotation.x = furniture.rotation.x;
-                    obj.rotation.y = furniture.rotation.y;
+                    obj.rotation.y = furniture.rotation.y + Math.PI;
                     obj.rotation.z = furniture.rotation.z;
                 } else {
                     const furnitures = houseObj.getObjectByName('furnitures')!;
@@ -410,7 +449,7 @@ function Main() {
                         );
                         
                         gltf.scene.rotation.x = furniture.rotation.x;
-                        gltf.scene.rotation.y = furniture.rotation.y;
+                        gltf.scene.rotation.y = furniture.rotation.y + Math.PI;
                         gltf.scene.rotation.z = furniture.rotation.z;
 
                         gltf.scene.traverse(obj => {
@@ -617,7 +656,7 @@ function Main() {
                 );
                 
                 gltf.scene.rotation.x = furniture.rotation.x;
-                gltf.scene.rotation.y = furniture.rotation.y;
+                gltf.scene.rotation.y = furniture.rotation.y + Math.PI;
                 gltf.scene.rotation.z = furniture.rotation.z;
                 
                 gltf.scene.traverse(obj => {

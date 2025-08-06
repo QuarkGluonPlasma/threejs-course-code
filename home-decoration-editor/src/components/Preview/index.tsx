@@ -20,12 +20,23 @@ function Preview() {
 
         scene3DRef.current = scene;
         camera3DRef.current = camera;
-        // controls3DRef.current = controls;
 
         return () => {
           dom.innerHTML = '';
         }
     }, []);
+
+    useEffect(() => {
+        const scene = scene3DRef.current!;
+
+        const furnitureGroup = scene.getObjectByName('furnitures');
+
+        furnitureGroup?.children.forEach(item => {
+            if(!data.furnitures.find(f => f.id === item.name)) {
+                item.parent?.remove(item);
+            }
+        })
+    }, [data.furnitures.length])
 
     useEffect(() => {
         const scene = scene3DRef.current;
@@ -122,7 +133,6 @@ function Preview() {
         
                 model.position.x = win.leftBottomPosition.left + win.width / 2;
                 model.position.y = win.leftBottomPosition.bottom + win.height / 2;
-                // model.position.z = item.position.z;
 
                 model.scale.set(win.width / size.x, win.height / size.y, 1);
 

@@ -40,8 +40,6 @@ function App() {
     })
   }, []);
 
-  const { showPreview } = useHouseStore();
-
   return <div>
       {
         modelLoaded ? 
@@ -52,7 +50,7 @@ function App() {
               <Main/>
               <Properties/>
             </div>
-            <Preview close={!showPreview}/>
+            <Preview/>
           </div>
           : <div id="loading">
               <p>loading...</p>

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {
     OrbitControls
 } from 'three/addons/controls/OrbitControls.js';
-import { FirstPersonControls, FlyControls } from 'three/examples/jsm/Addons.js';
+import { FirstPersonControls, FlyControls, RGBELoader } from 'three/examples/jsm/Addons.js';
 
 export function initPreviewScene(
     dom: HTMLElement
@@ -32,10 +32,10 @@ export function initPreviewScene(
     renderer.setSize(width, height);
 
     // const controls = new OrbitControls(camera, renderer.domElement);
-
+    
     const controls = new FlyControls(camera, renderer.domElement);
     controls.movementSpeed = 1000;
-    controls.rollSpeed = Math.PI / 10;
+    controls.rollSpeed = Math.PI / 6;
 
     const clock = new THREE.Clock();
     function render() {
@@ -46,6 +46,13 @@ export function initPreviewScene(
     }
 
     render();
+
+    const rgbeloader = new RGBELoader();
+
+    rgbeloader.load('./pic.hdr', function ( texture ) {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.background = texture;
+    });
 
     dom.append(renderer.domElement);
 
