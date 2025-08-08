@@ -180,6 +180,17 @@ npx live-server 起个静态服务就可以访问
 
 [实战：酷家乐装修编辑器](./home-decoration-editor/)
 
+![](./pic/kujiale-111.gif)
+
+![](./pic/kujiale-222.gif)
+
+![](./pic/kujiale-333.gif)
+
+![](./pic/kujiale-444.gif)
+
+![](./pic/kujiale-555.gif)
+
+
 [react-three-fiber：组件化开发 3D 场景](./react-three-fiber-test/)
 
 [物理引擎 cannon：实现真实世界的物理现象](./cannon-world/)
