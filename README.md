@@ -233,4 +233,8 @@ npx live-server 起个静态服务就可以访问
 
 [如何地图标注](./map-annotation/)
 
+[实战：全国人口柱状地图](./china-population-bar-chart/)
+
+![](./pic/china-population-bar-chart.gif)
+
 
