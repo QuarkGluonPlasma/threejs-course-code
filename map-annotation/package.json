@@ -1,0 +1,21 @@
+{
+  "name": "map-annotation",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "@types/three": "^0.179.0",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "d3-geo": "^3.1.1",
+    "three": "^0.179.1",
+    "three-spritetext": "^1.10.0"
+  }
+}
