@@ -26,6 +26,10 @@ npx live-server 起个静态服务就可以访问
 
 [如何画各种曲线](./curve/)
 
+[实战: 云雷纹](./cloudscape-figure/)
+
+![](./pic/cloudscape-figure.gif)
+
 [按照规律生成各种几何体](./generate-geometry/)
 
 [实战：隧道穿梭](./tube-travel/)
