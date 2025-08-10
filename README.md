@@ -233,6 +233,10 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/dodge-cars2.gif)
 
+[实战：佛光普照](./online-buddha/)
+
+![](./pic/online-buddha.gif)
+
 [geojson 和地图绘制](./geojson-map/)
 
 [如何地图标注](./map-annotation/)
