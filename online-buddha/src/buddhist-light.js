@@ -20,7 +20,7 @@ const particles = new ParticleSystem({
         new THREE.Vector4(1, 0.7, 0, 1),
         new THREE.Vector4(1, 0.7, 0, 1)
     ),
-    emissionOverTime: new ConstantValue(1000),
+    emissionOverTime: new ConstantValue(200),
     shape: new SphereEmitter({
         radius: 150,
         thickness: 0,

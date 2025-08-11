@@ -9,16 +9,21 @@ import halo from './halo.js';
 import ground from './ground.js';
 import { EffectComposer, GammaCorrectionShader, OutlinePass, RenderPass, ShaderPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 import textRain, { batchRenderer as br } from './text-rain.js';
+import flower, { loadPromise2 } from './flower.js';
+import gsap from 'gsap';
 
 const scene = new THREE.Scene();
 
-scene.add(mesh);
+loadPromise2.then(() => {
+  scene.add(mesh);
+});
 scene.add(buddhistLight);
 scene.add(halo);
 scene.add(ground);
 scene.add(textRain);
+scene.add(flower);
 
-const light = new THREE.DirectionalLight(0xffffff, 25);
+const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 200, 500);
 scene.add(light);
 
@@ -31,14 +36,57 @@ const axesHelper = new THREE.AxesHelper(1000);
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const camera = new THREE.PerspectiveCamera(60, width / height, 300, 10000);
-camera.position.set(0, 200, 600);
+const camera = new THREE.PerspectiveCamera(60, width / height, 300, 100000);
+// camera.position.set(0, 200, 600);
+camera.position.set(0, 20000, 0);
 camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true
 });
 renderer.setSize(width, height)
+
+Promise.all([loadPromise2, loadPromise]).then(() => {
+  gsap.to(camera.position, {
+    y: 200,
+    z: 600,
+    ease: 'none',
+    repeat: 0,
+    duration: 3,
+    onUpdate() {
+      const box3 = new THREE.Box3();
+      box3.expandByObject(mesh);
+
+      const center = box3.getCenter(new THREE.Vector3());
+  
+      camera.lookAt(center.x, center.y, center.z);
+    },
+    onComplete() {
+      flower.parent.remove(flower);
+
+      gsap.to(light, {
+        intensity: 25,
+        ease: 'none',
+        repeat: 0,
+        duration: 3
+      });
+
+      const color1 = new THREE.Color('#d4b5da');
+      const color2 = new THREE.Color('#000000');
+      const obj = { percent: 0};
+      gsap.to(obj, {
+        percent: 100,
+        ease: 'none',
+        repeat: 0,
+        duration: 1,
+        onUpdate() {
+          const c = color1.clone().lerp(color2, obj.percent / 100);
+          scene.background = c;
+        }
+      });
+    }
+  });
+})
 
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
@@ -89,4 +137,6 @@ loadPromise.then(() => {
   camera.lookAt(center.x, center.y, center.z);
   controls.target.set(center.x, center.y, center.z);
 })
-
+controls.addEventListener('change', () => {
+  console.log(camera.position);
+})
