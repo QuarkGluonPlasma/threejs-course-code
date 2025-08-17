@@ -245,4 +245,6 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/china-population-bar-chart.gif)
 
+[地图飞线](./map-flyline/)
 
+![](./pic/map-flyline.gif)
