@@ -182,6 +182,8 @@ npx live-server 起个静态服务就可以访问
 
 [向量点积实现锐角判断](./vector-dot/)
 
+[Vector3 的 API 和各种应用](./vector3-test/)
+
 [实战：酷家乐装修编辑器](./home-decoration-editor/)
 
 ![](./pic/kujiale-111.gif)
