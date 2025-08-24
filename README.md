@@ -250,3 +250,5 @@ npx live-server 起个静态服务就可以访问
 [地图飞线](./map-flyline/)
 
 ![](./pic/map-flyline.gif)
+
+[球面地图可视化](./spherical-world-map/)
