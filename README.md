@@ -252,3 +252,7 @@ npx live-server 起个静态服务就可以访问
 ![](./pic/map-flyline.gif)
 
 [球面地图可视化](./spherical-world-map/)
+
+[实战：交互式地球仪](./interactive-globe/)
+
+![](./pic/interactive-globe.gif)
