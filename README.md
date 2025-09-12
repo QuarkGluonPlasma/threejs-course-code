@@ -102,6 +102,8 @@ npx live-server 起个静态服务就可以访问
 
 [骨骼动画：关节带动顶点运动](./bone-animation/)
 
+[骨骼动画丝滑切换](./bone-animation-switch/)
+
 [GSAP:另一个常用动画库](./gsap-test/)
 
 [CSS2DRenderer 实现标注：给 3D 物体加标签](./css2d-annotation/)
