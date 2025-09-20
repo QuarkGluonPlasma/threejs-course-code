@@ -198,6 +198,9 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/kujiale-555.gif)
 
+[实战：实现酷家乐同款拖拽旋转控制器](./my-transform-controls/)
+
+![](./pic/my-transform-controls.gif)
 
 [react-three-fiber：组件化开发 3D 场景](./react-three-fiber-test/)
 
