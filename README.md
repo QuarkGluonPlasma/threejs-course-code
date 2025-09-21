@@ -262,4 +262,6 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/interactive-globe.gif)
 
+[玩家漫游](./player-roaming/)
+
 [炫酷 3D 滚动官网](./3d-webpage/)
