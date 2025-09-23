@@ -1,0 +1,18 @@
+{
+  "name": "meta-tourism",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/three": "^0.180.0",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  }
+}

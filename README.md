@@ -264,4 +264,8 @@ npx live-server 起个静态服务就可以访问
 
 [玩家漫游](./player-roaming/)
 
+[实战：小镇旅游](./meta-tourism/)
+
+![](./pic/meta-tourism.gif)
+
 [炫酷 3D 滚动官网](./3d-webpage/)
