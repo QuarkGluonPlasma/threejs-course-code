@@ -1,0 +1,30 @@
+* {
+  margin: 0;
+}
+#content {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.section {
+  height: 100vh;
+  text-align: center;
+  background: #000;
+}
+.section h1 {
+  padding-top: 50px;
+  font-size: 50px;
+  color:#fff;
+}
+
+.section1 h1{
+  padding-top: 100px;
+  font-size: 80px;
+}
+
+.section p{
+  font-size: 20px;
+  color: #fff;
+  display: inline-block;
+  width: 500px;
+}
