@@ -271,3 +271,7 @@ npx live-server 起个静态服务就可以访问
 [炫酷 3D 滚动官网](./3d-webpage/)
 
 [全屏滚动实战：太阳系 3D 科普网站](./solor-system)
+
+![](pic/solor-system.gif)
+
+[点云](./point-cloud/)
