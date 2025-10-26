@@ -276,6 +276,8 @@ npx live-server 起个静态服务就可以访问
 
 [点云](./point-cloud/)
 
+[表面采样器更常见的应用场景](./point-cloud2/)
+
 [表面采样器实战：漫山遍野的植被](./hillside-flowers/)
 
 ![](pic/hillside-flowers.gif)
