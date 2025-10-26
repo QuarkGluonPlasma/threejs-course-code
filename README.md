@@ -275,3 +275,8 @@ npx live-server 起个静态服务就可以访问
 ![](pic/solor-system.gif)
 
 [点云](./point-cloud/)
+
+[表面采样器实战：漫山遍野的植被](./hillside-flowers/)
+
+![](pic/hillside-flowers.gif)
+
