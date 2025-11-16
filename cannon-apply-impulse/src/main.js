@@ -1,0 +1,56 @@
+import './style.css';
+import * as THREE from 'three';
+import {
+    OrbitControls
+} from 'three/addons/controls/OrbitControls.js';
+import mesh from './mesh.js';
+
+const scene = new THREE.Scene();
+
+scene.add(mesh);
+
+const directionLight = new THREE.DirectionalLight(0xffffff);
+directionLight.position.set(500, 600, 800);
+directionLight.castShadow = true;
+directionLight.shadow.mapSize.set(2048, 2048);
+directionLight.shadow.camera.near = 1;
+directionLight.shadow.camera.far = 5000;
+directionLight.shadow.camera.left = -3000;
+directionLight.shadow.camera.right = 3000;
+directionLight.shadow.camera.top = 3000;
+directionLight.shadow.camera.bottom = -3000;
+scene.add(directionLight);
+
+const ambientLight = new THREE.AmbientLight();
+scene.add(ambientLight);
+
+const helper = new THREE.AxesHelper(1000);
+// scene.add(helper);
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 10000);
+camera.position.set(500, 600, 800);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: true,
+});
+renderer.setSize(width, height)
+renderer.shadowMap.enabled = true;
+
+function render() {
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+}
+
+render();
+
+document.body.append(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+export {
+  camera
+}

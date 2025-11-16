@@ -224,6 +224,10 @@ npx live-server 起个静态服务就可以访问
 
 [粒子的帧动画](./three-quarks-frame-animation/)
 
+[物理引擎 cannon：小球发射](./cannon-apply-impulse/)
+
+[cannon 实战：打保龄球](./bowling/)
+
 [粒子实战：小鱼吐泡泡](./fish-bubbles/)
 
 ![](./pic/fish-bubbles.gif)
