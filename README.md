@@ -228,6 +228,10 @@ npx live-server 起个静态服务就可以访问
 
 [cannon 实战：打保龄球](./bowling/)
 
+[cannon 物理引擎：铰链](./cannon-hingle-pendulum/)
+
+[cannon 物理引擎：旋转、向心力](./cannon-hingle-platform/)
+
 [粒子实战：小鱼吐泡泡](./fish-bubbles/)
 
 ![](./pic/fish-bubbles.gif)

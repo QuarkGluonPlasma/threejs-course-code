@@ -61,7 +61,7 @@ laneTexture.colorSpace = THREE.SRGBColorSpace;
 laneTexture.wrapS = THREE.RepeatWrapping;
 laneTexture.wrapT = THREE.RepeatWrapping;
 laneTexture.repeat.set(3, 10);
-const laneMaterial = new THREE.MeshLambertMaterial({ map: laneTexture, side: THREE.DoubleSide });
+const laneMaterial = new THREE.MeshPhongMaterial({ map: laneTexture, side: THREE.DoubleSide });
 
 const laneMesh = new THREE.Mesh(laneGeometry, laneMaterial);
 laneMesh.rotation.x = -Math.PI / 2; 
@@ -173,6 +173,20 @@ function render() {
 }
 render();
 
+let dragLine = null;
+function createDragLine() {
+    const lineGeometry = new THREE.BufferGeometry();
+    const lineMaterial = new THREE.LineBasicMaterial({ 
+        color: 0xffff00,
+        transparent: true
+    });
+    dragLine = new THREE.Line(lineGeometry, lineMaterial);
+    dragLine.visible = false;
+    group.add(dragLine);
+}
+
+createDragLine();
+
 let isDragging = false;
 let dragStart = new THREE.Vector2();
 let dragEnd = new THREE.Vector2();
@@ -190,6 +204,8 @@ function setupMouseInteraction() {
           
           dragStart.set(mouse.x, mouse.y);
           dragEnd.set(mouse.x, mouse.y);   
+
+          if (dragLine) dragLine.visible = true;
       }
   });
 
@@ -199,7 +215,9 @@ function setupMouseInteraction() {
           
           mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
           mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-          dragEnd.set(mouse.x, mouse.y);          
+          dragEnd.set(mouse.x, mouse.y);  
+          
+          updateDragLine();
       }
   });
 
@@ -209,6 +227,8 @@ function setupMouseInteraction() {
           isDragging = false;
 
           shootBall();
+
+          if (dragLine) dragLine.visible = false;
       }
   });
 }
@@ -249,6 +269,43 @@ function shootBall() {
    // applyImpulse 会在球的位置施加一个瞬间的力，使球开始运动
    ball.body.applyImpulse(direction.scale(force), ball.body.position);
   return;
+}
+
+function updateDragLine() {
+    if (!dragLine || !ball.mesh) return;
+    
+    const dragVector = new THREE.Vector2().subVectors(dragEnd, dragStart);
+    const dragDistance = dragVector.length();  // 拖拽距离
+    
+    // 计算力度：距离越大力度越大，最大 2000
+    const force = Math.min(dragDistance * 500, 2000);
+    
+    // 线的起点是球的位置
+    const startPos = ball.mesh.position.clone();
+    
+    // 计算发射方向：
+    const forwardComponent = Math.max(0.1, -dragVector.y);  // 确保有向前的力
+    const sideComponent = dragVector.x;  // 左右方向
+    
+    // 计算3D方向向量（在XZ平面上）
+    // 系数1.5和1.2用于调整方向控制的灵敏度
+    const direction = new THREE.Vector3(
+        sideComponent * 1.5,      // X方向（左右）
+        0,                         // Y方向（不向上发射）
+        -forwardComponent * 1.2 - 0.5  // Z方向（向前，负值）
+    ).normalize();
+    
+    // 线的长度与力度成正比
+    const lineLength = force * 0.15;
+    const endPos = startPos.clone().add(direction.multiplyScalar(lineLength));
+    
+    // 更新线的几何体顶点位置
+    const positions = new Float32Array([
+        startPos.x, startPos.y, startPos.z,
+        endPos.x, endPos.y, endPos.z
+    ]);
+    dragLine.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    dragLine.geometry.attributes.position.needsUpdate = true;
 }
 
 export default group;
