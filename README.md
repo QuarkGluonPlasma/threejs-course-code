@@ -2,6 +2,8 @@
 
 掘金小册[《Three.js 通关秘籍》](https://juejin.cn/book/7481132169944498226)案例代码 
 
+后续更多内容关注 #神光的幸福生活 公众号
+
 npx live-server 起个静态服务就可以访问
 
 如果是 vite 项目，那就先 npm install 再 npm run dev
@@ -276,6 +278,8 @@ npx live-server 起个静态服务就可以访问
 
 ![](./pic/meta-tourism.gif)
 
+[综合实战：开放世界](./open-world/)
+
 [Euler、Quaternion、Matrix4、MathUtils 等 api](./others-api/)
 
 [炫酷 3D 滚动官网](./3d-webpage/)
@@ -291,4 +295,5 @@ npx live-server 起个静态服务就可以访问
 [表面采样器实战：漫山遍野的植被](./hillside-flowers/)
 
 ![](pic/hillside-flowers.gif)
+
 
