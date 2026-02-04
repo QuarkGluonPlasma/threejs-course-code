@@ -5,9 +5,47 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>open-world</title>
+    <style>
+      .dialog {
+        line-height: 40px;
+        text-align: center;
+        font-size: 20px;
+        padding: 10px;
+        border: 1px solid #000;
+        background: #fff;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
+    <div id="viewTip">靠近车辆，按 X 上车</div>
+    <div id="personDialog" style="display:none;" class="dialog">
+      你好，我是NPC！
+    </div>
+    <div id="playerDialog" style="display:none;" class="dialog">
+      你好！
+    </div>
+    <div id="desktop" style="display: none;">
+      <img class="bg" src="./bg.png"/>
+      <div class="app">
+        <div class="logo"></div>
+        <div class="name">浏览器</div>
+      </div>
+      <iframe class="browser" style="display: none;" src="https://sogou.com/"></iframe>
+    </div>
     <script type="module" src="/src/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const appElement = document.querySelector('#desktop .app');
+        const browserElement = document.querySelector('#desktop .browser');
+        if (appElement && browserElement) {
+          appElement.addEventListener('dblclick', function() {
+            browserElement.style.display = browserElement.style.display === 'none' ? 'block' : 'none';
+          });
+        }
+      });
+    </script>
   </body>
 </html>

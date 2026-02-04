@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
-import { camera } from './main';
+import { CSS2DObject } from 'three/examples/jsm/Addons.js';
+import { camera, isCarView, isComputerView, isTalking } from './main';
 import * as CANNON from 'cannon-es';
 
 const world = new CANNON.World();
@@ -117,31 +118,30 @@ function createStairs(x, y, z, stepCount, stepWidth, stepDepth, stepHeight, colo
 
     world.addBody(rampBody);
 
-    // 平台的物理碰撞体（顶面应该和斜坡顶端高度一致）
-    const platformThickness = 0.2;
+    // 平台的物理碰撞体（从地面到顶部的实心结构）
     const platformBody = new CANNON.Body({
         mass: 0,
         position: new CANNON.Vec3(
             x,
-            y + totalStairsHeight - platformThickness / 2, // 平台顶面高度
+            y + totalStairsHeight / 2, // 平台中心高度
             z + stepCount * stepDepth + platformDepth / 2
         )
     });
-    platformBody.addShape(new CANNON.Box(new CANNON.Vec3(stepWidth / 2, platformThickness / 2, platformDepth / 2)));
+    platformBody.addShape(new CANNON.Box(new CANNON.Vec3(stepWidth / 2, totalStairsHeight / 2, platformDepth / 2)));
     world.addBody(platformBody);
 
     // 可视化物理斜坡（调试用）
-    const rampVisualGeo = new THREE.BoxGeometry(stepWidth, rampThickness, rampLength);
-    const rampVisualMat = new THREE.MeshPhongMaterial({
-        color: 'green',
-        transparent: true,
-        opacity: 0.3,
-        wireframe: false
-    });
-    const rampVisualMesh = new THREE.Mesh(rampVisualGeo, rampVisualMat);
-    rampVisualMesh.position.set(x, rampCenterY, rampCenterZ);
-    rampVisualMesh.rotation.x = -angle;
-    group.add(rampVisualMesh);
+    // const rampVisualGeo = new THREE.BoxGeometry(stepWidth, rampThickness, rampLength);
+    // const rampVisualMat = new THREE.MeshPhongMaterial({
+    //     color: 'green',
+    //     transparent: true,
+    //     opacity: 0.3,
+    //     wireframe: false
+    // });
+    // const rampVisualMesh = new THREE.Mesh(rampVisualGeo, rampVisualMat);
+    // rampVisualMesh.position.set(x, rampCenterY, rampCenterZ);
+    // rampVisualMesh.rotation.x = -angle;
+    // group.add(rampVisualMesh);
 }
 
 // 创建楼梯
@@ -213,6 +213,15 @@ gltfLoader.load('./Soldier.glb', (gltf) => {
   camera.position.set(0, 1.5, 2.5); // 在人物后上方
   camera.lookAt(0, 1, 0);
 
+  // 创建玩家对话框
+  const playerDialogElement = document.getElementById('playerDialog');
+  if (playerDialogElement) {
+    const playerDialogObject = new CSS2DObject(playerDialogElement);
+    playerDialogObject.position.set(0, playerHeight + 0.2, 0); // 在玩家头顶上方，向下调整
+    characterModel.add(playerDialogObject);
+    playerDialogElement.style.display = 'none'; // 默认隐藏
+  }
+
   idleAction.play();
 
   // const clock = new THREE.Clock();
@@ -258,6 +267,8 @@ const minCameraAngle = THREE.MathUtils.degToRad(-20);
 const maxCameraAngle = THREE.MathUtils.degToRad(20);
 
 document.addEventListener('mousedown', () => {
+  // 在电脑模式下不进入鼠标锁定模式
+  if (isComputerView) return;
   document.body.requestPointerLock();
 });
 
@@ -266,7 +277,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 
 document.addEventListener('mousemove', (e) => {
-  if (!isPointerLocked || !characterModel) return;
+  if (!isPointerLocked || !characterModel || isCarView || isComputerView) return;
 
   characterModel.rotation.y -= e.movementX / 500;
 
@@ -285,7 +296,7 @@ const airControlSpeed = 1.5;
 const jumpForce = 1000;
 
 function updatePlayerMovement(deltaTime) {
-  if (!characterModel) return;
+  if (!characterModel || isCarView || isComputerView || isTalking) return;
 
     // 检测是否在地面或物体上
   const physicsVelocity = playerBody.velocity;
@@ -383,3 +394,4 @@ function animate() {
 animate();
 
 export default group;
+export { world, characterModel, playerBody, playerHeight };
