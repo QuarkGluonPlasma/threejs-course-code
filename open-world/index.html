@@ -21,6 +21,7 @@
   <body>
     <div id="app"></div>
     <div id="viewTip">靠近车辆，按 X 上车</div>
+    <div id="weatherTip">当前天气: 晴天 | 按数字键切换天气 (1-4)</div>
     <div id="personDialog" style="display:none;" class="dialog">
       你好，我是NPC！
     </div>
@@ -35,6 +36,109 @@
       </div>
       <iframe class="browser" style="display: none;" src="https://sogou.com/"></iframe>
     </div>
+    <!-- 小地图 -->
+    <div id="miniMap">
+      <canvas class="map-canvas" id="miniMapCanvas"></canvas>
+      <div class="map-legend">
+        <div class="legend-item">
+          <span class="legend-icon player-icon"></span>
+          <span>玩家</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon car-icon"></span>
+          <span>车辆</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon plane-icon"></span>
+          <span>飞机</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon npc-icon"></span>
+          <span>NPC</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon house-icon"></span>
+          <span>房屋</span>
+        </div>
+      </div>
+      <div class="map-hint">按 M 键打开全屏地图</div>
+    </div>
+    <!-- 全屏地图 -->
+    <div id="fullMap" style="display: none;">
+      <div class="map-header">
+        <h2>地图</h2>
+        <button id="closeMapBtn" class="close-btn">关闭 (M)</button>
+      </div>
+      <canvas class="map-canvas-full" id="fullMapCanvas"></canvas>
+      <div class="map-legend-full">
+        <div class="legend-item">
+          <span class="legend-icon player-icon"></span>
+          <span>玩家</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon car-icon"></span>
+          <span>车辆</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon plane-icon"></span>
+          <span>飞机</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon npc-icon"></span>
+          <span>NPC</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-icon house-icon"></span>
+          <span>房屋</span>
+        </div>
+      </div>
+    </div>
+    <!-- 设置面板 -->
+    <div id="settingsPanel" style="display: none;">
+      <div class="settings-content">
+        <div class="settings-header">
+          <h2>设置</h2>
+          <button id="closeSettingsBtn" class="close-btn">关闭 (ESC)</button>
+        </div>
+        <div class="settings-body">
+          <div class="settings-section">
+            <h3>音频设置</h3>
+            <div class="settings-item">
+              <label>
+                <input type="checkbox" id="bgMusicToggle" checked>
+                <span>背景音乐</span>
+              </label>
+            </div>
+            <div class="settings-item">
+              <label>
+                <input type="checkbox" id="soundEffectToggle" checked>
+                <span>音效</span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>界面设置</h3>
+            <div class="settings-item">
+              <label>
+                <input type="checkbox" id="miniMapToggle" checked>
+                <span>小地图</span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>天气设置</h3>
+            <div class="weather-buttons">
+              <button class="weather-btn" data-weather="clear">晴天</button>
+              <button class="weather-btn" data-weather="rain">雨天</button>
+              <button class="weather-btn" data-weather="snow">雪天</button>
+              <button class="weather-btn" data-weather="fog">雾天</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 设置按钮 -->
+    <button id="settingsBtn" class="settings-btn" title="设置 (P)">⚙️</button>
     <script type="module" src="/src/main.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {

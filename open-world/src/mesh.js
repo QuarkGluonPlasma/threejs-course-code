@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
-import { camera, isCarView, isComputerView, isTalking } from './main';
+import { camera, isCarView, isPlaneView, isComputerView, isTalking, isSettingsOpen } from './main';
 import * as CANNON from 'cannon-es';
 
 const world = new CANNON.World();
@@ -187,6 +187,28 @@ let idleAction = null;
 let walkAction = null;
 let currentAction = null;
 
+// 走路音效
+const walkSound = new Audio(`${import.meta.env.BASE_URL}walk.mp3`);
+walkSound.loop = true;
+walkSound.volume = 0.5;
+let isWalkSoundPlaying = false;
+let soundEffectEnabled = true; // 音效开关状态
+
+// 导出函数来控制音效开关
+export function setSoundEffectEnabled(enabled) {
+  soundEffectEnabled = enabled;
+  if (!enabled && isWalkSoundPlaying) {
+    walkSound.pause();
+    walkSound.currentTime = 0;
+    isWalkSoundPlaying = false;
+  }
+}
+
+// 导出函数来获取音效开关状态
+export function getSoundEffectEnabled() {
+  return soundEffectEnabled;
+}
+
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.load('./Soldier.glb', (gltf) => {
@@ -266,9 +288,24 @@ let isPointerLocked = false;
 const minCameraAngle = THREE.MathUtils.degToRad(-20);
 const maxCameraAngle = THREE.MathUtils.degToRad(20);
 
-document.addEventListener('mousedown', () => {
+document.addEventListener('mousedown', (e) => {
   // 在电脑模式下不进入鼠标锁定模式
   if (isComputerView) return;
+  
+  // 如果点击的是设置面板或设置按钮，不进入鼠标锁定模式
+  const target = e.target;
+  const settingsPanel = document.getElementById('settingsPanel');
+  const settingsBtn = document.getElementById('settingsBtn');
+  const fullMap = document.getElementById('fullMap');
+  
+  // 检查是否点击了设置相关的元素
+  if (isSettingsOpen || 
+      (settingsPanel && (settingsPanel.contains(target) || settingsPanel === target)) ||
+      (settingsBtn && (settingsBtn.contains(target) || settingsBtn === target)) ||
+      (fullMap && fullMap.style.display !== 'none' && fullMap.contains(target))) {
+    return;
+  }
+  
   document.body.requestPointerLock();
 });
 
@@ -296,7 +333,7 @@ const airControlSpeed = 1.5;
 const jumpForce = 1000;
 
 function updatePlayerMovement(deltaTime) {
-  if (!characterModel || isCarView || isComputerView || isTalking) return;
+  if (!characterModel || isCarView || isPlaneView || isComputerView || isTalking) return;
 
     // 检测是否在地面或物体上
   const physicsVelocity = playerBody.velocity;
@@ -361,6 +398,22 @@ function updatePlayerMovement(deltaTime) {
     }
   }
 
+  // 控制走路音效
+  if (soundEffectEnabled && isMoving && isOnGround && !isCarView && !isPlaneView && !isComputerView && !isTalking) {
+    if (!isWalkSoundPlaying) {
+      walkSound.play().catch(err => {
+        console.log('播放走路音效失败:', err);
+      });
+      isWalkSoundPlaying = true;
+    }
+  } else {
+    if (isWalkSoundPlaying) {
+      walkSound.pause();
+      walkSound.currentTime = 0; // 重置到开头，下次播放时从头开始
+      isWalkSoundPlaying = false;
+    }
+  }
+
   if (keyPressed.space) {
     const physicsVelocity = playerBody.velocity;
     const velocityY = Math.abs(physicsVelocity.y);
@@ -394,4 +447,4 @@ function animate() {
 animate();
 
 export default group;
-export { world, characterModel, playerBody, playerHeight };
+export { world, characterModel, playerBody, playerHeight, walkSound };

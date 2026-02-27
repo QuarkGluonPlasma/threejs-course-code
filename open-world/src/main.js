@@ -4,12 +4,14 @@ import {
     OrbitControls
 } from 'three/addons/controls/OrbitControls.js';
 import { CSS3DRenderer, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
-import mesh, { characterModel, playerBody, playerHeight } from './mesh.js';
-import car, { carModel, carBody } from './car.js';
-import plane, { planeModel, planeBody } from './plane.js';
+import mesh, { characterModel, playerBody, playerHeight, walkSound, setSoundEffectEnabled } from './mesh.js';
+import car, { carModel, carBody, stopCarSound } from './car.js';
+import plane, { planeModel, planeBody, stopPlaneSound } from './plane.js';
 import house, { doorMesh, doorBody } from './house.js';
 import person, { personModel, personBody } from './person.js';
 import { isNearComputer, enterComputerView, exitComputerView } from './computer.js';
+import { mapSystem, updateMapMarkers, toggleFullMap } from './map.js';
+import { initWeatherSystem, updateWeather, setWeather, WeatherType, getWeatherSystem } from './weather.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -44,6 +46,187 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(width, height)
 renderer.shadowMap.enabled = true;
+
+// 初始化天气系统
+initWeatherSystem(scene, camera, renderer);
+
+// 背景音乐
+const backgroundMusic = new Audio(`${import.meta.env.BASE_URL}秋日私语.mp3`);
+backgroundMusic.loop = true;
+backgroundMusic.volume = 0.3; // 背景音乐音量设置为30%
+
+// 在用户第一次交互时播放背景音乐（浏览器自动播放限制）
+let musicStarted = false;
+function startBackgroundMusic() {
+  if (!musicStarted) {
+    backgroundMusic.play().catch(err => {
+      console.log('播放背景音乐失败:', err);
+    });
+    musicStarted = true;
+  }
+}
+
+// 监听用户交互事件来启动背景音乐
+document.addEventListener('click', startBackgroundMusic, { once: true });
+document.addEventListener('keydown', startBackgroundMusic, { once: true });
+
+// 设置面板控制
+export let isSettingsOpen = false;
+let soundEffectEnabled = true;
+let backgroundMusicEnabled = true;
+let miniMapEnabled = true;
+
+function toggleSettings() {
+  const settingsPanel = document.getElementById('settingsPanel');
+  if (!settingsPanel) return;
+  
+  isSettingsOpen = !isSettingsOpen;
+  settingsPanel.style.display = isSettingsOpen ? 'flex' : 'none';
+  
+  // 当打开设置面板时，退出指针锁定模式
+  if (isSettingsOpen && document.pointerLockElement) {
+    document.exitPointerLock();
+  }
+  
+  // 更新当前天气按钮状态
+  if (isSettingsOpen) {
+    updateWeatherButtonStates();
+  }
+}
+
+function updateWeatherButtonStates() {
+  const weatherButtons = document.querySelectorAll('.weather-btn');
+  const weatherSystem = getWeatherSystem();
+  const currentWeather = weatherSystem ? weatherSystem.getCurrentWeather() : WeatherType.CLEAR;
+  
+  weatherButtons.forEach(btn => {
+    const weather = btn.getAttribute('data-weather');
+    let weatherType;
+    
+    switch(weather) {
+      case 'clear':
+        weatherType = WeatherType.CLEAR;
+        break;
+      case 'rain':
+        weatherType = WeatherType.RAIN;
+        break;
+      case 'snow':
+        weatherType = WeatherType.SNOW;
+        break;
+      case 'fog':
+        weatherType = WeatherType.FOG;
+        break;
+      default:
+        weatherType = WeatherType.CLEAR;
+    }
+    
+    btn.classList.toggle('active', weatherType === currentWeather);
+  });
+}
+
+// 初始化设置面板
+document.addEventListener('DOMContentLoaded', () => {
+  const settingsBtn = document.getElementById('settingsBtn');
+  const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+  const bgMusicToggle = document.getElementById('bgMusicToggle');
+  const soundEffectToggle = document.getElementById('soundEffectToggle');
+  const miniMapToggle = document.getElementById('miniMapToggle');
+  const weatherButtons = document.querySelectorAll('.weather-btn');
+  const settingsPanel = document.getElementById('settingsPanel');
+  const miniMap = document.getElementById('miniMap');
+  
+  // 阻止设置面板内的点击事件冒泡，防止触发指针锁定
+  if (settingsPanel) {
+    settingsPanel.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+    });
+    settingsPanel.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
+  
+  if (settingsBtn) {
+    settingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSettings();
+    });
+  }
+  
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleSettings();
+    });
+  }
+  
+  // 背景音乐开关
+  if (bgMusicToggle) {
+    bgMusicToggle.addEventListener('change', (e) => {
+      backgroundMusicEnabled = e.target.checked;
+      if (backgroundMusicEnabled && musicStarted) {
+        backgroundMusic.play().catch(err => {
+          console.log('播放背景音乐失败:', err);
+        });
+      } else {
+        backgroundMusic.pause();
+      }
+    });
+  }
+  
+  // 音效开关
+  if (soundEffectToggle) {
+    soundEffectToggle.addEventListener('change', (e) => {
+      soundEffectEnabled = e.target.checked;
+      setSoundEffectEnabled(soundEffectEnabled);
+      // 如果关闭音效，立即停止所有音效
+      if (!soundEffectEnabled) {
+        stopCarSound();
+        stopPlaneSound();
+      }
+    });
+  }
+  
+  // 小地图开关
+  if (miniMapToggle && miniMap) {
+    // 初始化小地图显示状态
+    miniMap.style.display = miniMapEnabled ? 'flex' : 'none';
+    
+    miniMapToggle.addEventListener('change', (e) => {
+      miniMapEnabled = e.target.checked;
+      miniMap.style.display = miniMapEnabled ? 'flex' : 'none';
+    });
+  }
+  
+  // 天气切换按钮
+  weatherButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const weather = btn.getAttribute('data-weather');
+      let weatherType;
+      
+      switch(weather) {
+        case 'clear':
+          weatherType = WeatherType.CLEAR;
+          break;
+        case 'rain':
+          weatherType = WeatherType.RAIN;
+          break;
+        case 'snow':
+          weatherType = WeatherType.SNOW;
+          break;
+        case 'fog':
+          weatherType = WeatherType.FOG;
+          break;
+        default:
+          weatherType = WeatherType.CLEAR;
+      }
+      
+      setWeather(weatherType);
+      
+      // 更新按钮状态
+      updateWeatherButtonStates();
+    });
+  });
+});
 
 const css3Renderer = new CSS3DRenderer();
 css3Renderer.setSize(width, height);
@@ -173,7 +356,7 @@ function updateViewTip() {
     } else if (isNearComputer(characterModel)) {
         tipElement.textContent = '按 E 打电脑';
     } else {
-        tipElement.textContent = '靠近车辆按 X 上车 | 靠近飞机按 C 上飞机 | 靠近电脑按 E 打电脑';
+        tipElement.textContent = '靠近车辆按 X 上车 | 靠近飞机按 C 上飞机 | 靠近电脑按 E 打电脑 | 按 M 打开地图';
     }
 }
 
@@ -227,6 +410,13 @@ function render() {
         doorMesh.quaternion.copy(doorBody.quaternion);
     }
     
+    // 更新地图标记和绘制
+    updateMapMarkers(characterModel, carModel, planeModel, personModel, camera, isCarView, isPlaneView);
+    mapSystem.update();
+    
+    // 更新天气系统
+    updateWeather();
+    
     requestAnimationFrame(render);
 }
 
@@ -251,6 +441,7 @@ window.addEventListener('keydown', (event) => {
         if (isCarView) {
             // 在车辆视角时，可以随时下车
             isCarView = false;
+            stopCarSound(); // 停止开车音效
             if (carModel && characterModel && carBody && playerBody) {
                 carModel.remove(camera);
 
@@ -318,6 +509,7 @@ window.addEventListener('keydown', (event) => {
 
                 // 飞机在地面或接近地面时，可以下飞机
                 isPlaneView = false;
+                stopPlaneSound(); // 停止开飞机音效
                 planeModel.remove(camera);
 
                 // 显示人物模型
@@ -402,6 +594,37 @@ window.addEventListener('keydown', (event) => {
         if (isNearPerson() && isTalking && !isPlaneView && !isCarView && !isComputerView) {
             isTalking = false;
             dialogueIndex = 0;
+        }
+    } else if (event.key === 'm' || event.key === 'M') {
+        // M 键处理：切换全屏地图（在非电脑模式下）
+        if (!isComputerView) {
+            toggleFullMap();
+        }
+    } else if (event.key === '1') {
+        // 数字键1：晴天
+        setWeather(WeatherType.CLEAR);
+        if (isSettingsOpen) updateWeatherButtonStates();
+    } else if (event.key === '2') {
+        // 数字键2：雨天
+        setWeather(WeatherType.RAIN);
+        if (isSettingsOpen) updateWeatherButtonStates();
+    } else if (event.key === '3') {
+        // 数字键3：雪天
+        setWeather(WeatherType.SNOW);
+        if (isSettingsOpen) updateWeatherButtonStates();
+    } else if (event.key === '4') {
+        // 数字键4：雾天
+        setWeather(WeatherType.FOG);
+        if (isSettingsOpen) updateWeatherButtonStates();
+    } else if (event.key === 'p' || event.key === 'P') {
+        // P 键：打开/关闭设置面板（在非电脑模式下）
+        if (!isComputerView) {
+            toggleSettings();
+        }
+    } else if (event.key === 'Escape') {
+        // ESC 键：关闭设置面板
+        if (isSettingsOpen) {
+            toggleSettings();
         }
     }
 });

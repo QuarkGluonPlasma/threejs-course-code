@@ -16,6 +16,20 @@ body {
   pointer-events: none;
 }
 
+#weatherTip {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 5px;
+  font-size: 14px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
 #desktop {
   width: 600px;
   height: 1100px;
@@ -64,4 +78,293 @@ body {
   left: -150px;
   top: 250px;
   rotate: -90deg;
+}
+
+/* 小地图样式 */
+#miniMap {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.map-canvas {
+  width: 100%;
+  height: 200px;
+  background: #90a955;
+  position: relative;
+  display: block;
+}
+
+.map-legend {
+  padding: 8px;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.player-icon {
+  background: #ff0000;
+  border: 2px solid #fff;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.8);
+}
+
+.car-icon {
+  background: #0066ff;
+  border: 2px solid #fff;
+}
+
+.plane-icon {
+  background: #00ff00;
+  border: 2px solid #fff;
+}
+
+.npc-icon {
+  background: #ffaa00;
+  border: 2px solid #fff;
+}
+
+.house-icon {
+  background: #8b4513;
+  border: 2px solid #fff;
+}
+
+.map-hint {
+  padding: 4px 8px;
+  font-size: 9px;
+  color: #666;
+  text-align: center;
+  background: rgba(240, 240, 240, 0.9);
+}
+
+/* 全屏地图样式 */
+#fullMap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #333;
+}
+
+.map-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+}
+
+.close-btn {
+  padding: 10px 20px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.close-btn:hover {
+  background: #ff6666;
+}
+
+.map-canvas-full {
+  flex: 1;
+  background: #90a955;
+  position: relative;
+  display: block;
+  margin: 20px auto;
+  border: 3px solid #333;
+  border-radius: 8px;
+  max-width: 800px;
+  max-height: 800px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.map-legend-full {
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  border-top: 2px solid #333;
+}
+
+.map-legend-full .legend-item {
+  font-size: 14px;
+  color: white;
+}
+
+.map-legend-full .legend-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* 设置面板样式 */
+#settingsPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.settings-content {
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 2px solid #555;
+}
+
+.settings-header {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #555;
+  border-radius: 12px 12px 0 0;
+}
+
+.settings-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+}
+
+.settings-body {
+  padding: 20px;
+}
+
+.settings-section {
+  margin-bottom: 30px;
+}
+
+.settings-section h3 {
+  color: #fff;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 10px;
+}
+
+.settings-item {
+  margin-bottom: 15px;
+}
+
+.settings-item label {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  gap: 10px;
+}
+
+.settings-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.weather-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.weather-btn {
+  padding: 12px 20px;
+  background: #4a5568;
+  color: white;
+  border: 2px solid #666;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.weather-btn:hover {
+  background: #5a6578;
+  border-color: #888;
+  transform: translateY(-2px);
+}
+
+.weather-btn.active {
+  background: #3182ce;
+  border-color: #4299e1;
+}
+
+/* 设置按钮 */
+.settings-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.settings-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
 }

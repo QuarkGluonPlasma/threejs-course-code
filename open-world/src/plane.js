@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es';
-import { world } from './mesh.js';
+import { world, getSoundEffectEnabled } from './mesh.js';
 import { camera, isPlaneView } from './main.js';
 
 const loader = new GLTFLoader();
@@ -64,6 +64,12 @@ loadPromise.then(gltf => {
 
     gltf.scene.position.set(-10, 1.15, 10);
 })
+
+// 开飞机音效
+const planeSound = new Audio(`${import.meta.env.BASE_URL}开飞机.mp3`);
+planeSound.loop = true;
+planeSound.volume = 0.5;
+let isPlaneSoundPlaying = false;
 
 // 飞机控制参数
 const planeSpeed = 15;
@@ -192,6 +198,24 @@ function updatePlaneMovement(deltaTime) {
 
   // 设置飞机速度
   planeBody.velocity.set(velocityX, velocityY, velocityZ);
+
+  // 控制开飞机音效
+  const isMoving = keyPressed.w || keyPressed.s || keyPressed.space || keyPressed.shift;
+  const soundEffectEnabled = getSoundEffectEnabled();
+  if (soundEffectEnabled && isMoving && isPlaneView) {
+    if (!isPlaneSoundPlaying) {
+      planeSound.play().catch(err => {
+        console.log('播放开飞机音效失败:', err);
+      });
+      isPlaneSoundPlaying = true;
+    }
+  } else {
+    if (isPlaneSoundPlaying) {
+      planeSound.pause();
+      planeSound.currentTime = 0;
+      isPlaneSoundPlaying = false;
+    }
+  }
 }
 
 // 动画循环 - 同步物理体和模型
@@ -236,5 +260,14 @@ function animatePlane() {
 }
 
 animatePlane();
+
+// 导出函数来停止开飞机音效
+export function stopPlaneSound() {
+  if (isPlaneSoundPlaying) {
+    planeSound.pause();
+    planeSound.currentTime = 0;
+    isPlaneSoundPlaying = false;
+  }
+}
 
 export default group;

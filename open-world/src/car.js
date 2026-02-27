@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es';
-import { world } from './mesh.js';
+import { world, getSoundEffectEnabled } from './mesh.js';
 import { camera, isCarView } from './main.js';
 
 const loader = new GLTFLoader();
@@ -60,6 +60,12 @@ loadPromise.then(gltf => {
     group.add(carModel);
     console.log(gltf);
 })
+
+// 开车音效
+const carSound = new Audio(`${import.meta.env.BASE_URL}开车.mp3`);
+carSound.loop = true;
+carSound.volume = 0.5;
+let isCarSoundPlaying = false;
 
 // 车辆控制参数
 const carSpeed = 15;
@@ -168,6 +174,24 @@ function updateCarMovement(deltaTime) {
     carBody.velocity.x = 0;
     carBody.velocity.z = 0;
   }
+
+  // 控制开车音效
+  const isMoving = keyPressed.w || keyPressed.s;
+  const soundEffectEnabled = getSoundEffectEnabled();
+  if (soundEffectEnabled && isMoving && isCarView) {
+    if (!isCarSoundPlaying) {
+      carSound.play().catch(err => {
+        console.log('播放开车音效失败:', err);
+      });
+      isCarSoundPlaying = true;
+    }
+  } else {
+    if (isCarSoundPlaying) {
+      carSound.pause();
+      carSound.currentTime = 0;
+      isCarSoundPlaying = false;
+    }
+  }
 }
 
 // 动画循环 - 同步物理体和模型
@@ -191,6 +215,15 @@ function animateCar() {
 }
 
 animateCar();
+
+// 导出函数来停止开车音效
+export function stopCarSound() {
+  if (isCarSoundPlaying) {
+    carSound.pause();
+    carSound.currentTime = 0;
+    isCarSoundPlaying = false;
+  }
+}
 
 export default group;
 
