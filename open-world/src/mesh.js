@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
-import { camera, isCarView, isPlaneView, isComputerView, isTalking, isSettingsOpen } from './main';
+import { camera, isCarView, isPlaneView, isComputerView, isTalking, isSettingsOpen, isManualOpen } from './main';
 import * as CANNON from 'cannon-es';
+import { loadingManager } from './loading.js';
 
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
@@ -210,7 +211,7 @@ export function getSoundEffectEnabled() {
 }
 
 
-const gltfLoader = new GLTFLoader();
+const gltfLoader = new GLTFLoader(loadingManager);
 gltfLoader.load('./Soldier.glb', (gltf) => {
   characterModel = gltf.scene;
   characterModel.scale.setScalar(0.8);
@@ -267,6 +268,8 @@ const keyPressed = {
 
 window.addEventListener('keydown', (e) => {
   const key = e.key.toLowerCase();
+  // 忽略存档快捷键，避免触发 S 键向后移动
+  if (e.ctrlKey && e.shiftKey && key === 's') return;
   if (key === ' ') {
     keyPressed.space = true;
   } else if (key in keyPressed) {
@@ -276,6 +279,11 @@ window.addEventListener('keydown', (e) => {
 
 window.addEventListener('keyup', (e) => {
   const key = e.key.toLowerCase();
+  // 释放 S 时若为存档快捷键，确保清除移动状态
+  if (e.ctrlKey && e.shiftKey && key === 's') {
+    keyPressed.s = false;
+    return;
+  }
   if (key === ' ') {
     keyPressed.space = false;
   } else if (key in keyPressed) {
@@ -298,10 +306,13 @@ document.addEventListener('mousedown', (e) => {
   const settingsBtn = document.getElementById('settingsBtn');
   const fullMap = document.getElementById('fullMap');
   
-  // 检查是否点击了设置相关的元素
-  if (isSettingsOpen || 
+  const manualPanel = document.getElementById('manualPanel');
+  const manualBtn = document.getElementById('manualBtn');
+  if (isSettingsOpen || isManualOpen ||
       (settingsPanel && (settingsPanel.contains(target) || settingsPanel === target)) ||
       (settingsBtn && (settingsBtn.contains(target) || settingsBtn === target)) ||
+      (manualPanel && (manualPanel.contains(target) || manualPanel === target)) ||
+      (manualBtn && (manualBtn.contains(target) || manualBtn === target)) ||
       (fullMap && fullMap.style.display !== 'none' && fullMap.contains(target))) {
     return;
   }
@@ -445,6 +456,16 @@ function animate() {
 }
 
 animate();
+
+// 存档系统：设置玩家状态
+export function setPlayerState({ x, y, z, rotY, vx, vy, vz }) {
+  if (!playerBody) return;
+  playerBody.position.set(x, y, z);
+  playerBody.velocity.set(vx ?? 0, vy ?? 0, vz ?? 0);
+  if (characterModel) {
+    characterModel.rotation.y = rotY ?? 0;
+  }
+}
 
 export default group;
 export { world, characterModel, playerBody, playerHeight, walkSound };

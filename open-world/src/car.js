@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es';
 import { world, getSoundEffectEnabled } from './mesh.js';
 import { camera, isCarView } from './main.js';
+import { loadingManager } from './loading.js';
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 
 const group = new THREE.Group();
 
@@ -222,6 +223,18 @@ export function stopCarSound() {
     carSound.pause();
     carSound.currentTime = 0;
     isCarSoundPlaying = false;
+  }
+}
+
+export function setCarState({ x, y, z, qx, qy, qz, qw, vx, vy, vz }) {
+  carBody.position.set(x, y, z);
+  carBody.quaternion.set(qx, qy, qz, qw);
+  carBody.velocity.set(vx ?? 0, vy ?? 0, vz ?? 0);
+  carBody.angularVelocity.set(0, 0, 0);
+  if (carModel) {
+    carModel.position.copy(carBody.position);
+    carModel.position.y -= carSize.height / 2;
+    carModel.quaternion.copy(carBody.quaternion);
   }
 }
 

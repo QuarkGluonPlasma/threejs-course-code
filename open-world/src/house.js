@@ -319,5 +319,12 @@ const hinge = new CANNON.HingeConstraint(doorFrameBody, doorBody, {
 });
 world.addConstraint(hinge);
 
+export function setDoorState({ x, y, z, qx, qy, qz, qw }) {
+  doorBody.position.set(x, y, z);
+  doorBody.quaternion.set(qx, qy, qz, qw);
+  doorBody.velocity.set(0, 0, 0);
+  doorBody.angularVelocity.set(0, 0, 0);
+}
+
 export default group;
 export { doorMesh, doorBody };

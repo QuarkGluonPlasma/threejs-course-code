@@ -6,6 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>open-world</title>
     <style>
+      /* 关键 CSS - 首屏立即生效，避免 FOUC */
+      body { margin: 0; }
+      #loadingOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        display: flex; justify-content: center; align-items: center;
+        z-index: 10000; transition: opacity 0.5s ease;
+      }
+      .loading-content { text-align: center; color: #fff; }
+      .loading-content h1 { font-size: 28px; margin-bottom: 24px; font-weight: 300; }
+      .loading-bar {
+        width: 320px; height: 8px; background: rgba(255,255,255,0.2);
+        border-radius: 4px; overflow: hidden; margin: 0 auto 12px;
+      }
+      .loading-progress {
+        height: 100%; width: 0%; background: linear-gradient(90deg,#4ade80,#22c55e);
+        border-radius: 4px; transition: width 0.2s ease;
+      }
+      .loading-content p { font-size: 14px; color: rgba(255,255,255,0.7); }
+      #loadingOverlay.hidden { opacity: 0; pointer-events: none; }
+    </style>
+    <style>
       .dialog {
         line-height: 40px;
         text-align: center;
@@ -19,9 +41,17 @@
     </style>
   </head>
   <body>
+    <div id="loadingOverlay">
+      <div class="loading-content">
+        <h1>加载中...</h1>
+        <div class="loading-bar"><div id="loadingProgress" class="loading-progress"></div></div>
+        <p id="loadingPercent">0%</p>
+      </div>
+    </div>
     <div id="app"></div>
-    <div id="viewTip">靠近车辆，按 X 上车</div>
-    <div id="weatherTip">当前天气: 晴天 | 按数字键切换天气 (1-4)</div>
+    <div id="viewTip"></div>
+    <div id="weatherTip">晴天</div>
+    <div id="saveLoadToast" class="save-load-toast"></div>
     <div id="personDialog" style="display:none;" class="dialog">
       你好，我是NPC！
     </div>
@@ -61,7 +91,7 @@
           <span>房屋</span>
         </div>
       </div>
-      <div class="map-hint">按 M 键打开全屏地图</div>
+      <div class="map-hint">按 ? 查看帮助</div>
     </div>
     <!-- 全屏地图 -->
     <div id="fullMap" style="display: none;">
@@ -134,11 +164,58 @@
               <button class="weather-btn" data-weather="fog">雾天</button>
             </div>
           </div>
+          <div class="settings-section">
+            <h3>存档</h3>
+            <div class="save-load-buttons">
+              <button id="saveGameBtn" class="save-btn">存档</button>
+              <button id="loadGameBtn" class="load-btn">读档</button>
+            </div>
+            <div id="saveStatus" class="save-status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 使用手册 -->
+    <div id="manualPanel" style="display: none;">
+      <div class="manual-content">
+        <div class="manual-header">
+          <h2>使用手册</h2>
+          <button id="closeManualBtn" class="close-btn">关闭 (?)</button>
+        </div>
+        <div class="manual-body">
+          <section>
+            <h3>移动</h3>
+            <p>WASD 移动 · 空格 跳跃 · 鼠标 转动视角</p>
+          </section>
+          <section>
+            <h3>载具</h3>
+            <p>靠近车辆按 <kbd>X</kbd> 上车/下车</p>
+            <p>靠近飞机按 <kbd>C</kbd> 上飞机/下飞机（需先降落）</p>
+            <p>飞行时：空格上升 · Shift 下降</p>
+          </section>
+          <section>
+            <h3>交互</h3>
+            <p>靠近电脑按 <kbd>E</kbd> 使用</p>
+            <p>靠近 NPC 按 <kbd>H</kbd> 对话 · <kbd>K</kbd> 结束</p>
+          </section>
+          <section>
+            <h3>界面</h3>
+            <p><kbd>M</kbd> 地图 · <kbd>P</kbd> 设置 · <kbd>?</kbd> 本手册</p>
+          </section>
+          <section>
+            <h3>天气</h3>
+            <p>数字键 1-4 切换，或在设置中选择</p>
+          </section>
+          <section>
+            <h3>存档</h3>
+            <p>Ctrl+Shift+S 存档 · Ctrl+Shift+L 读档</p>
+          </section>
         </div>
       </div>
     </div>
     <!-- 设置按钮 -->
-    <button id="settingsBtn" class="settings-btn" title="设置 (P)">⚙️</button>
+    <button id="settingsBtn" class="settings-btn" title="设置">⚙️</button>
+    <button id="manualBtn" class="manual-btn" title="使用手册">?</button>
     <script type="module" src="/src/main.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {

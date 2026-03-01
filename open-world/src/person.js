@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import * as CANNON from 'cannon-es';
 import { world } from './mesh.js';
+import { loadingManager } from './loading.js';
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 
 const group = new THREE.Group();
 

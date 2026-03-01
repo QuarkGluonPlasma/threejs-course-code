@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as CANNON from 'cannon-es';
 import { world, getSoundEffectEnabled } from './mesh.js';
 import { camera, isPlaneView } from './main.js';
+import { loadingManager } from './loading.js';
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 
 const group = new THREE.Group();
 
@@ -267,6 +268,17 @@ export function stopPlaneSound() {
     planeSound.pause();
     planeSound.currentTime = 0;
     isPlaneSoundPlaying = false;
+  }
+}
+
+export function setPlaneState({ x, y, z, qx, qy, qz, qw, vx, vy, vz }) {
+  planeBody.position.set(x, y, z);
+  planeBody.quaternion.set(qx, qy, qz, qw);
+  planeBody.velocity.set(vx ?? 0, vy ?? 0, vz ?? 0);
+  planeBody.angularVelocity.set(0, 0, 0);
+  if (planeModel) {
+    planeModel.position.copy(planeBody.position);
+    planeModel.quaternion.copy(planeBody.quaternion);
   }
 }
 

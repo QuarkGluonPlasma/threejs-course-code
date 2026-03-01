@@ -2,6 +2,59 @@ body {
   margin: 0;
 }
 
+/* 加载界面 */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.5s ease;
+}
+
+#loadingOverlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  color: #fff;
+}
+
+.loading-content h1 {
+  font-size: 28px;
+  margin-bottom: 24px;
+  font-weight: 300;
+}
+
+.loading-bar {
+  width: 320px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 auto 12px;
+}
+
+.loading-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 4px;
+  transition: width 0.2s ease;
+}
+
+.loading-content p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
 #viewTip {
   position: fixed;
   bottom: 20px;
@@ -19,15 +72,52 @@ body {
 #weatherTip {
   position: fixed;
   top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  background-color: rgba(0, 0, 0, 0.6);
+  left: 20px;
+  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
-  border-radius: 5px;
-  font-size: 14px;
+  border-radius: 4px;
+  font-size: 12px;
   z-index: 1000;
   pointer-events: none;
+}
+
+/* 存档/读档提示 Toast */
+.save-load-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 16px 32px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  border-radius: 8px;
+  font-size: 18px;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  text-align: center;
+  max-width: 90%;
+}
+
+.save-load-toast.show {
+  opacity: 1;
+}
+
+.save-load-toast.success {
+  border: 2px solid #38a169;
+  color: #9ae6b4;
+}
+
+.save-load-toast.error {
+  border: 2px solid #e53e3e;
+  color: #feb2b2;
+}
+
+.save-load-toast.warning {
+  border: 2px solid #d69e2e;
+  color: #faf089;
 }
 
 #desktop {
@@ -343,6 +433,50 @@ body {
   border-color: #4299e1;
 }
 
+/* 存档按钮 */
+.save-load-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.save-btn,
+.load-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn {
+  background: #38a169;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #48bb78;
+  transform: translateY(-2px);
+}
+
+.load-btn {
+  background: #3182ce;
+  color: white;
+}
+
+.load-btn:hover {
+  background: #4299e1;
+  transform: translateY(-2px);
+}
+
+.save-status {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #a0aec0;
+  min-height: 20px;
+}
+
 /* 设置按钮 */
 .settings-btn {
   position: fixed;
@@ -367,4 +501,107 @@ body {
   background: rgba(0, 0, 0, 0.8);
   border-color: rgba(255, 255, 255, 0.5);
   transform: scale(1.1);
+}
+
+/* 使用手册按钮 */
+.manual-btn {
+  position: fixed;
+  top: 20px;
+  right: 80px;
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.manual-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+/* 使用手册面板 */
+#manualPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.manual-content {
+  background: rgba(30, 30, 30, 0.98);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 2px solid #555;
+}
+
+.manual-header {
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #555;
+  border-radius: 12px 12px 0 0;
+}
+
+.manual-header h2 {
+  color: white;
+  margin: 0;
+  font-size: 22px;
+}
+
+.manual-body {
+  padding: 24px;
+}
+
+.manual-body section {
+  margin-bottom: 20px;
+}
+
+.manual-body section:last-child {
+  margin-bottom: 0;
+}
+
+.manual-body h3 {
+  color: #4ade80;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.manual-body p {
+  color: #e2e8f0;
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.manual-body kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #4a5568;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
 }

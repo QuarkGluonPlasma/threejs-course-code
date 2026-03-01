@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CSS3DObject } from 'three/examples/jsm/Addons.js';
 import * as CANNON from 'cannon-es';
 import { world } from './mesh.js';
+import { loadingManager } from './loading.js';
 
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 
 let css3dObj = null;
 let monitorPosition = null;

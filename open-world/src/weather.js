@@ -239,7 +239,7 @@ class WeatherSystem {
     this.updateWeatherTip();
   }
   
-  // 更新天气提示
+  // 更新天气提示（仅显示当前天气）
   updateWeatherTip() {
     const weatherNames = {
       [WeatherType.CLEAR]: '晴天',
@@ -250,7 +250,7 @@ class WeatherSystem {
     
     const tipElement = document.getElementById('weatherTip');
     if (tipElement) {
-      tipElement.textContent = `当前天气: ${weatherNames[this.currentWeather]} | 按数字键切换天气 (1-4)`;
+      tipElement.textContent = weatherNames[this.currentWeather];
     }
   }
   

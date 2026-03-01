@@ -4,14 +4,17 @@ import {
     OrbitControls
 } from 'three/addons/controls/OrbitControls.js';
 import { CSS3DRenderer, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { loadCompletePromise } from './loading.js';
 import mesh, { characterModel, playerBody, playerHeight, walkSound, setSoundEffectEnabled } from './mesh.js';
-import car, { carModel, carBody, stopCarSound } from './car.js';
-import plane, { planeModel, planeBody, stopPlaneSound } from './plane.js';
-import house, { doorMesh, doorBody } from './house.js';
+import car, { carModel, carBody, stopCarSound, setCarState } from './car.js';
+import plane, { planeModel, planeBody, stopPlaneSound, setPlaneState } from './plane.js';
+import house, { doorMesh, doorBody, setDoorState } from './house.js';
 import person, { personModel, personBody } from './person.js';
 import { isNearComputer, enterComputerView, exitComputerView } from './computer.js';
 import { mapSystem, updateMapMarkers, toggleFullMap } from './map.js';
 import { initWeatherSystem, updateWeather, setWeather, WeatherType, getWeatherSystem } from './weather.js';
+import { saveGame, loadGame, hasSave, getSaveTimestamp } from './save.js';
+import { setPlayerState } from './mesh.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -72,9 +75,31 @@ document.addEventListener('keydown', startBackgroundMusic, { once: true });
 
 // 设置面板控制
 export let isSettingsOpen = false;
+export let isManualOpen = false;
 let soundEffectEnabled = true;
 let backgroundMusicEnabled = true;
 let miniMapEnabled = true;
+
+function getSettings() {
+  return { soundEffectEnabled, backgroundMusicEnabled, miniMapEnabled };
+}
+function setSettingsFromSave(s) {
+  if (!s) return;
+  soundEffectEnabled = s.soundEffectEnabled !== false;
+  backgroundMusicEnabled = s.backgroundMusicEnabled !== false;
+  miniMapEnabled = s.miniMapEnabled !== false;
+  setSoundEffectEnabled(soundEffectEnabled);
+  const bgMusicEl = document.getElementById('bgMusicToggle');
+  const soundEl = document.getElementById('soundEffectToggle');
+  const miniMapEl = document.getElementById('miniMapToggle');
+  const miniMapEl2 = document.getElementById('miniMap');
+  if (bgMusicEl) bgMusicEl.checked = backgroundMusicEnabled;
+  if (soundEl) soundEl.checked = soundEffectEnabled;
+  if (miniMapEl) miniMapEl.checked = miniMapEnabled;
+  if (miniMapEl2) miniMapEl2.style.display = miniMapEnabled ? 'flex' : 'none';
+  if (!backgroundMusicEnabled && musicStarted) backgroundMusic.pause();
+  else if (backgroundMusicEnabled && musicStarted) backgroundMusic.play().catch(() => {});
+}
 
 function toggleSettings() {
   const settingsPanel = document.getElementById('settingsPanel');
@@ -82,6 +107,15 @@ function toggleSettings() {
   
   isSettingsOpen = !isSettingsOpen;
   settingsPanel.style.display = isSettingsOpen ? 'flex' : 'none';
+  
+  // 打开设置时更新存档状态提示
+  if (isSettingsOpen) {
+    const statusEl = document.getElementById('saveStatus');
+    if (statusEl && !statusEl.textContent) {
+      const ts = getSaveTimestamp();
+      statusEl.textContent = ts ? `上次存档: ${new Date(ts).toLocaleString('zh-CN')}` : '暂无存档';
+    }
+  }
   
   // 当打开设置面板时，退出指针锁定模式
   if (isSettingsOpen && document.pointerLockElement) {
@@ -91,6 +125,16 @@ function toggleSettings() {
   // 更新当前天气按钮状态
   if (isSettingsOpen) {
     updateWeatherButtonStates();
+  }
+}
+
+function toggleManual() {
+  const manualPanel = document.getElementById('manualPanel');
+  if (!manualPanel) return;
+  isManualOpen = !isManualOpen;
+  manualPanel.style.display = isManualOpen ? 'flex' : 'none';
+  if (isManualOpen && document.pointerLockElement) {
+    document.exitPointerLock();
   }
 }
 
@@ -122,6 +166,143 @@ function updateWeatherButtonStates() {
     
     btn.classList.toggle('active', weatherType === currentWeather);
   });
+}
+
+// 强制退出载具/电脑，回到玩家步行状态（读档时使用）
+function forceExitToPlayer() {
+  if (isComputerView) {
+    isComputerView = false;
+    exitComputerView(camera, characterModel, css3Renderer);
+  }
+  if (isCarView) {
+    isCarView = false;
+    stopCarSound();
+    if (carModel && characterModel && carBody && playerBody) {
+      carModel.remove(camera);
+      characterModel.visible = true;
+      const carPosition = carBody.position;
+      const forward = new THREE.Vector3();
+      carModel.getWorldDirection(forward);
+      forward.y = 0;
+      forward.normalize();
+      const left = new THREE.Vector3(forward.z, 0, -forward.x);
+      const leftOffset = 2;
+      playerBody.position.set(
+        carPosition.x + left.x * leftOffset,
+        playerHeight / 2,
+        carPosition.z + left.z * leftOffset
+      );
+      playerBody.velocity.set(0, 0, 0);
+      characterModel.position.copy(playerBody.position);
+      characterModel.position.y -= playerHeight / 2;
+      characterModel.rotation.y = carModel.rotation.y;
+      characterModel.add(camera);
+      camera.position.set(0, 1.5, 2.5);
+      camera.rotation.set(0, 0, 0);
+      camera.up.set(0, 1, 0);
+    }
+  }
+  if (isPlaneView) {
+    isPlaneView = false;
+    stopPlaneSound();
+    if (planeModel && characterModel && planeBody && playerBody) {
+      planeModel.remove(camera);
+      characterModel.visible = true;
+      const planePosition = planeBody.position;
+      const forward = new THREE.Vector3();
+      planeModel.getWorldDirection(forward);
+      forward.y = 0;
+      forward.normalize();
+      const left = new THREE.Vector3(forward.z, 0, -forward.x);
+      const leftOffset = 2;
+      playerBody.position.set(
+        planePosition.x + left.x * leftOffset,
+        playerHeight / 2,
+        planePosition.z + left.z * leftOffset
+      );
+      playerBody.velocity.set(0, 0, 0);
+      characterModel.position.copy(playerBody.position);
+      characterModel.position.y -= playerHeight / 2;
+      characterModel.rotation.y = planeModel.rotation.y;
+      characterModel.add(camera);
+      camera.position.set(0, 1.5, 2.5);
+      camera.rotation.set(0, 0, 0);
+      camera.up.set(0, 1, 0);
+    }
+  }
+  isTalking = false;
+  dialogueIndex = 0;
+}
+
+// 存档
+function doSave() {
+  if (isCarView || isPlaneView || isComputerView) {
+    showSaveStatus('请先下车/下飞机/退出电脑后再存档', 'warning');
+    return;
+  }
+  if (!confirm('确定要存档吗？')) return;
+  const getters = {
+    playerBody,
+    carBody,
+    planeBody,
+    doorBody,
+    characterModel,
+    weather: () => getWeatherSystem()?.getCurrentWeather(),
+    settings: getSettings
+  };
+  const result = saveGame(getters);
+  if (result.success) {
+    const time = new Date(result.timestamp).toLocaleString('zh-CN');
+    showSaveStatus(`存档成功 (${time})`, 'success');
+  } else {
+    showSaveStatus('存档失败', 'error');
+  }
+}
+
+// 读档
+function doLoad() {
+  if (!hasSave()) {
+    showSaveStatus('暂无存档', 'error');
+    return;
+  }
+  if (!confirm('确定要读档吗？当前进度将被覆盖。')) return;
+  forceExitToPlayer();
+  const setters = {
+    setPlayerState,
+    setCarState,
+    setPlaneState,
+    setDoorState,
+    setWeather,
+    setSettings: setSettingsFromSave
+  };
+  const result = loadGame(setters);
+  if (result.success) {
+    if (isSettingsOpen) updateWeatherButtonStates();
+    const time = result.timestamp ? new Date(result.timestamp).toLocaleString('zh-CN') : '';
+    showSaveStatus(`读档成功 (存档于 ${time})`, 'success');
+  } else {
+    showSaveStatus(result.reason || '读档失败', 'error');
+  }
+}
+
+function showSaveStatus(msg, type = 'info') {
+  // 设置面板内的状态
+  const statusEl = document.getElementById('saveStatus');
+  if (statusEl) {
+    statusEl.textContent = msg;
+    statusEl.className = 'save-status save-status-' + (type || 'info');
+    if (msg) setTimeout(() => { statusEl.textContent = ''; }, 3000);
+  }
+  // 屏幕中央 Toast 提示（始终可见）
+  const toast = document.getElementById('saveLoadToast');
+  if (toast && msg) {
+    toast.textContent = msg;
+    toast.className = 'save-load-toast show ' + (type || 'info');
+    clearTimeout(showSaveStatus._toastTimer);
+    showSaveStatus._toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2500);
+  }
 }
 
 // 初始化设置面板
@@ -197,6 +378,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // 存档/读档按钮
+  const saveBtn = document.getElementById('saveGameBtn');
+  const loadBtn = document.getElementById('loadGameBtn');
+  if (saveBtn) saveBtn.addEventListener('click', () => { doSave(); });
+  if (loadBtn) loadBtn.addEventListener('click', () => { doLoad(); });
+
+  // 使用手册
+  const manualBtn = document.getElementById('manualBtn');
+  const closeManualBtn = document.getElementById('closeManualBtn');
+  const manualPanel = document.getElementById('manualPanel');
+  if (manualBtn) manualBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleManual(); });
+  if (closeManualBtn) closeManualBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleManual(); });
+  if (manualPanel) {
+    manualPanel.addEventListener('mousedown', (e) => e.stopPropagation());
+    manualPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
+
   // 天气切换按钮
   weatherButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -317,27 +515,20 @@ function isNearPerson() {
     return distance < 3; // 3米范围内
 }
 
-// 更新提示文本
+// 更新提示文本（仅显示当前情境下的操作提示）
 function updateViewTip() {
     const tipElement = document.getElementById('viewTip');
     if (!tipElement) return;
 
     if (isComputerView) {
-        tipElement.textContent = '按 E 退出电脑';
+        tipElement.textContent = '按 E 退出';
     } else if (isCarView) {
         tipElement.textContent = '按 X 下车';
     } else if (isPlaneView) {
-        // 检查飞机是否在地面
-        if (planeBody) {
-            const planeHeight = planeBody.position.y;
-            const groundHeight = 1.15;
-            if (planeHeight > groundHeight + 1) {
-                tipElement.textContent = '空格键上升 | Shift键下降 | 请先降落再按 C 下飞机';
-            } else {
-                tipElement.textContent = '空格键上升 | Shift键下降 | 按 C 下飞机';
-            }
+        if (planeBody && planeBody.position.y > 2.15) {
+            tipElement.textContent = '空格上升 Shift下降 · 先降落再按 C 下飞机';
         } else {
-            tipElement.textContent = '按 C 下飞机';
+            tipElement.textContent = '空格上升 Shift下降 · 按 C 下飞机';
         }
     } else if (isNearCar()) {
         tipElement.textContent = '按 X 上车';
@@ -345,19 +536,16 @@ function updateViewTip() {
         tipElement.textContent = '按 C 上飞机';
     } else if (isNearPerson()) {
         if (isTalking) {
-            if (dialogueIndex < dialogueData.length) {
-                tipElement.textContent = '按 H 键继续对话 | 按 K 键结束对话';
-            } else {
-                tipElement.textContent = '对话结束，按 H 键重新开始 | 按 K 键结束对话';
-            }
+            tipElement.textContent = dialogueIndex < dialogueData.length ? '按 H 继续 按 K 结束' : '按 H 重新开始 按 K 结束';
         } else {
-            tipElement.textContent = '按 H 键开始对话';
+            tipElement.textContent = '按 H 对话';
         }
     } else if (isNearComputer(characterModel)) {
-        tipElement.textContent = '按 E 打电脑';
+        tipElement.textContent = '按 E 使用电脑';
     } else {
-        tipElement.textContent = '靠近车辆按 X 上车 | 靠近飞机按 C 上飞机 | 靠近电脑按 E 打电脑 | 按 M 打开地图';
+        tipElement.textContent = '';
     }
+    tipElement.style.display = tipElement.textContent ? 'block' : 'none';
 }
 
 // 控制对话框显示和内容
@@ -420,7 +608,12 @@ function render() {
     requestAnimationFrame(render);
 }
 
-render();
+// 全部加载完成后再显示游戏并开始渲染
+loadCompletePromise.then(() => {
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) overlay.classList.add('hidden');
+    render();
+});
 
 // 窗口大小调整处理
 window.addEventListener('resize', () => {
@@ -616,16 +809,19 @@ window.addEventListener('keydown', (event) => {
         // 数字键4：雾天
         setWeather(WeatherType.FOG);
         if (isSettingsOpen) updateWeatherButtonStates();
+    } else if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        doSave();
+    } else if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === 'l') {
+        event.preventDefault();
+        doLoad();
+    } else if (event.key === '?' || event.key === '？') {
+        toggleManual();
     } else if (event.key === 'p' || event.key === 'P') {
-        // P 键：打开/关闭设置面板（在非电脑模式下）
-        if (!isComputerView) {
-            toggleSettings();
-        }
+        if (!isComputerView) toggleSettings();
     } else if (event.key === 'Escape') {
-        // ESC 键：关闭设置面板
-        if (isSettingsOpen) {
-            toggleSettings();
-        }
+        if (isManualOpen) toggleManual();
+        else if (isSettingsOpen) toggleSettings();
     }
 });
 
