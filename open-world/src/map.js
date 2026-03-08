@@ -34,7 +34,8 @@ class MapSystem {
       car: { x: 0, z: 10, color: '#0066ff', label: '车辆' },
       plane: { x: -10, z: 10, color: '#00ff00', label: '飞机' },
       npc: { x: 5, z: 5, color: '#ffaa00', label: 'NPC' },
-      house: { x: -20, z: -20, color: '#8b4513', label: '房屋' }
+      house: { x: -20, z: -20, color: '#8b4513', label: '房屋' },
+      hut: { x: 20, z: -20, color: '#ff69b4', label: '镜屋' }
     };
     
     // 绑定关闭按钮事件

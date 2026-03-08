@@ -243,6 +243,11 @@ body {
   border: 2px solid #fff;
 }
 
+.hut-icon {
+  background: #ff69b4;
+  border: 2px solid #fff;
+}
+
 .map-hint {
   padding: 4px 8px;
   font-size: 9px;

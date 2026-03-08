@@ -10,6 +10,7 @@ import car, { carModel, carBody, stopCarSound, setCarState } from './car.js';
 import plane, { planeModel, planeBody, stopPlaneSound, setPlaneState } from './plane.js';
 import house, { doorMesh, doorBody, setDoorState } from './house.js';
 import person, { personModel, personBody } from './person.js';
+import dancingMirrorHut, { updateDancingMirrorHut, dancingMirrorHutPosition } from './dancingMirrorHut.js';
 import { isNearComputer, enterComputerView, exitComputerView } from './computer.js';
 import { mapSystem, updateMapMarkers, toggleFullMap } from './map.js';
 import { initWeatherSystem, updateWeather, setWeather, WeatherType, getWeatherSystem } from './weather.js';
@@ -24,6 +25,7 @@ scene.add(car);
 scene.add(plane);
 scene.add(house);
 scene.add(person);
+scene.add(dancingMirrorHut);
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 const sun = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -458,6 +460,7 @@ export let isComputerView = false;
 
 // 对话状态
 export let isTalking = false;
+export let isTalkingToDancer = false;
 
 // 对话系统
 const dialogueData = [
@@ -469,6 +472,24 @@ const dialogueData = [
 ];
 
 let dialogueIndex = 0;
+
+const dancerDialogueData = [
+    { player: "你好！", npc: "嗨～你也来看镜子呀？" },
+    { player: "嗯，你跳得真好。", npc: "谢谢！我天天在这儿练，你要不要也试试？" },
+    { player: "我也可以跳吗？", npc: "当然呀，我教你！很简单的。" },
+    { player: "好啊，教教我。", npc: "那你准备好哦，按 D 开始跳舞～" }
+];
+
+let dancerDialogueIndex = 0;
+
+// 检查是否靠近镜屋女孩
+function isNearDancer() {
+    if (!characterModel || !dancingMirrorHutPosition) return false;
+    const p = characterModel.position;
+    const dx = p.x - dancingMirrorHutPosition.x;
+    const dz = p.z - dancingMirrorHutPosition.z;
+    return Math.sqrt(dx * dx + dz * dz) < 3;
+}
 
 // 检查人物是否在车辆附近
 function isNearCar() {
@@ -540,6 +561,16 @@ function updateViewTip() {
         } else {
             tipElement.textContent = '按 H 对话';
         }
+    } else if (isNearDancer()) {
+        if (isTalkingToDancer) {
+            if (dancerDialogueIndex < dancerDialogueData.length) {
+                tipElement.textContent = '按 H 继续 按 K 结束';
+            } else {
+                tipElement.textContent = '按 D 开始跳舞 | 按 K 结束对话';
+            }
+        } else {
+            tipElement.textContent = '按 H 对话';
+        }
     } else if (isNearComputer(characterModel)) {
         tipElement.textContent = '按 E 使用电脑';
     } else {
@@ -553,33 +584,46 @@ function updateDialogs() {
     const personDialog = document.getElementById('personDialog');
     const playerDialog = document.getElementById('playerDialog');
     
-    // 只有在对话状态且靠近人物时才显示对话框
-    if (isTalking && isNearPerson() && !isCarView && !isPlaneView && !isComputerView) {
+    const inPersonTalk = isTalking && isNearPerson() && !isCarView && !isPlaneView && !isComputerView;
+    const inDancerTalk = isTalkingToDancer && isNearDancer() && !isCarView && !isPlaneView && !isComputerView;
+
+    if (inPersonTalk) {
         if (personDialog && playerDialog) {
-            // 显示当前对话内容
             if (dialogueIndex < dialogueData.length) {
                 personDialog.textContent = dialogueData[dialogueIndex].npc;
                 playerDialog.textContent = dialogueData[dialogueIndex].player;
                 personDialog.style.display = 'block';
                 playerDialog.style.display = 'block';
             } else {
-                // 对话结束，隐藏对话框
                 personDialog.style.display = 'none';
                 playerDialog.style.display = 'none';
             }
         }
+    } else if (inDancerTalk) {
+        const dancerDialog = document.getElementById('dancerDialog');
+        if (dancerDialog && playerDialog) {
+            if (dancerDialogueIndex < dancerDialogueData.length) {
+                dancerDialog.textContent = dancerDialogueData[dancerDialogueIndex].npc;
+                playerDialog.textContent = dancerDialogueData[dancerDialogueIndex].player;
+                dancerDialog.style.display = 'block';
+                playerDialog.style.display = 'block';
+            } else {
+                dancerDialog.style.display = 'none';
+                playerDialog.style.display = 'none';
+            }
+        }
     } else {
-        // 其他情况隐藏对话框
-        if (personDialog) {
-            personDialog.style.display = 'none';
-        }
-        if (playerDialog) {
-            playerDialog.style.display = 'none';
-        }
-        // 如果远离人物，结束对话状态并重置
+        if (personDialog) personDialog.style.display = 'none';
+        const dancerDialog = document.getElementById('dancerDialog');
+        if (dancerDialog) dancerDialog.style.display = 'none';
+        if (playerDialog) playerDialog.style.display = 'none';
         if (!isNearPerson()) {
             isTalking = false;
             dialogueIndex = 0;
+        }
+        if (!isNearDancer()) {
+            isTalkingToDancer = false;
+            dancerDialogueIndex = 0;
         }
     }
 }
@@ -600,6 +644,7 @@ function render() {
     
     // 更新地图标记和绘制
     updateMapMarkers(characterModel, carModel, planeModel, personModel, camera, isCarView, isPlaneView);
+    updateDancingMirrorHut();
     mapSystem.update();
     
     // 更新天气系统
@@ -766,27 +811,37 @@ window.addEventListener('keydown', (event) => {
             enterComputerView(camera, scene, css3Renderer, characterModel);
         }
     } else if (event.key === 'h' || event.key === 'H') {
-        // H 键处理：如果靠近人物，则用于对话
-        if (isNearPerson() && !isPlaneView && !isCarView && !isComputerView) {
+        if (isNearPerson() && !isNearDancer() && !isPlaneView && !isCarView && !isComputerView) {
             if (!isTalking) {
-                // 开始对话
                 isTalking = true;
                 dialogueIndex = 0;
             } else {
-                // 继续对话
                 if (dialogueIndex < dialogueData.length - 1) {
                     dialogueIndex++;
                 } else {
-                    // 对话结束，重新开始
                     dialogueIndex = 0;
+                }
+            }
+        } else if (isNearDancer() && !isPlaneView && !isCarView && !isComputerView) {
+            if (!isTalkingToDancer) {
+                isTalkingToDancer = true;
+                dancerDialogueIndex = 0;
+            } else {
+                if (dancerDialogueIndex < dancerDialogueData.length - 1) {
+                    dancerDialogueIndex++;
+                } else {
+                    dancerDialogueIndex = 0;
                 }
             }
         }
     } else if (event.key === 'k' || event.key === 'K') {
-        // K 键处理：结束对话
         if (isNearPerson() && isTalking && !isPlaneView && !isCarView && !isComputerView) {
             isTalking = false;
             dialogueIndex = 0;
+        }
+        if (isNearDancer() && isTalkingToDancer && !isPlaneView && !isCarView && !isComputerView) {
+            isTalkingToDancer = false;
+            dancerDialogueIndex = 0;
         }
     } else if (event.key === 'm' || event.key === 'M') {
         // M 键处理：切换全屏地图（在非电脑模式下）
