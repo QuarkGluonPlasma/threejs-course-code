@@ -1,9 +1,25 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { camera, isCarView, isPlaneView, isComputerView, isTalking, isSettingsOpen, isManualOpen } from './main';
 import * as CANNON from 'cannon-es';
 import { loadingManager } from './loading.js';
+
+function findSkinnedMesh(obj) {
+  let result = null;
+  obj.traverse((child) => {
+    if (child.isSkinnedMesh && child.skeleton && !result) result = child;
+  });
+  return result;
+}
+
+function findAnimationByName(animations, keyword) {
+  if (!animations.length) return null;
+  const lower = keyword.toLowerCase();
+  const found = animations.find((clip) => clip.name.toLowerCase().includes(lower));
+  return found || animations[0];
+}
 
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
@@ -184,9 +200,12 @@ world.addBody(playerBody);
 
 let characterModel = null;
 let mixer = null;
+let danceMixer = null;
 let idleAction = null;
 let walkAction = null;
+let danceAction = null;
 let currentAction = null;
+let isDancing = false;
 
 // 走路音效
 const walkSound = new Audio(`${import.meta.env.BASE_URL}walk.mp3`);
@@ -214,6 +233,7 @@ export function getSoundEffectEnabled() {
 const gltfLoader = new GLTFLoader(loadingManager);
 gltfLoader.load('./Soldier.glb', (gltf) => {
   characterModel = gltf.scene;
+  console.log('Character model loaded:', gltf);
   characterModel.scale.setScalar(0.8);
   characterModel.traverse((child) => {
     if (child.isMesh) {
@@ -231,6 +251,28 @@ gltfLoader.load('./Soldier.glb', (gltf) => {
   currentAction = idleAction;
 
   characterModel.add(camera);
+
+  // 从 Michelle.glb 重定向跳舞动画到士兵（重定向后的 clip 需在 SkinnedMesh 的 mixer 上播放）
+  const soldierSkin = findSkinnedMesh(characterModel);
+  if (soldierSkin) {
+    new GLTFLoader(loadingManager).load('./Michelle.glb', (michelleGltf) => {
+      const michelleSkin = findSkinnedMesh(michelleGltf.scene);
+      const danceClip = findAnimationByName(michelleGltf.animations, 'dance');
+      if (!michelleSkin || !danceClip) return;
+      try {
+        const retargetedClip = SkeletonUtils.retargetClip(soldierSkin, michelleSkin, danceClip, {
+          hip: 'mixamorigHips',
+          scale: 1,
+          getBoneName: (bone) => bone.name
+        });
+        danceMixer = new THREE.AnimationMixer(soldierSkin);
+        danceAction = danceMixer.clipAction(retargetedClip);
+        danceAction.setLoop(THREE.LoopRepeat);
+      } catch (err) {
+        console.warn('跳舞动画重定向失败:', err);
+      }
+    });
+  }
 
   // 设置相机相对人物的位置（局部坐标）
   camera.position.set(0, 1.5, 2.5); // 在人物后上方
@@ -344,9 +386,9 @@ const airControlSpeed = 1.5;
 const jumpForce = 1000;
 
 function updatePlayerMovement(deltaTime) {
-  if (!characterModel || isCarView || isPlaneView || isComputerView || isTalking) return;
+  if (!characterModel || isCarView || isPlaneView || isComputerView || isTalking || isDancing) return;
 
-    // 检测是否在地面或物体上
+  // 检测是否在地面或物体上
   const physicsVelocity = playerBody.velocity;
   const velocityY = Math.abs(physicsVelocity.y);
   const isOnGround = velocityY < 1.0;
@@ -402,7 +444,7 @@ function updatePlayerMovement(deltaTime) {
       if (currentAction) currentAction.stop();
       walkAction.play();
       currentAction = walkAction;
-    } else if (!isMoving && currentAction !== idleAction) {
+    } else if (!isMoving && currentAction !== idleAction && !isDancing) {
       if (currentAction) currentAction.stop();
       idleAction.play();
       currentAction = idleAction;
@@ -410,7 +452,7 @@ function updatePlayerMovement(deltaTime) {
   }
 
   // 控制走路音效
-  if (soundEffectEnabled && isMoving && isOnGround && !isCarView && !isPlaneView && !isComputerView && !isTalking) {
+  if (soundEffectEnabled && isMoving && isOnGround && !isCarView && !isPlaneView && !isComputerView && !isTalking && !isDancing) {
     if (!isWalkSoundPlaying) {
       walkSound.play().catch(err => {
         console.log('播放走路音效失败:', err);
@@ -448,6 +490,9 @@ function animate() {
   if (mixer) {
     mixer.update(dt);
   }
+  if (danceMixer && isDancing) {
+    danceMixer.update(dt);
+  }
 
   if (characterModel) {
     characterModel.position.copy(playerBody.position);
@@ -456,6 +501,24 @@ function animate() {
 }
 
 animate();
+
+export function startPlayerDance() {
+  if (!danceMixer || !danceAction || isDancing) return;
+  isDancing = true;
+  if (currentAction) currentAction.fadeOut(0.2);
+  danceAction.reset().fadeIn(0.2).play();
+  currentAction = danceAction;
+}
+
+export function stopPlayerDance() {
+  if (!danceMixer || !isDancing) return;
+  isDancing = false;
+  danceAction.fadeOut(0.2);
+  if (idleAction) {
+    idleAction.reset().fadeIn(0.2).play();
+    currentAction = idleAction;
+  }
+}
 
 // 存档系统：设置玩家状态
 export function setPlayerState({ x, y, z, rotY, vx, vy, vz }) {
@@ -468,4 +531,4 @@ export function setPlayerState({ x, y, z, rotY, vx, vy, vz }) {
 }
 
 export default group;
-export { world, characterModel, playerBody, playerHeight, walkSound };
+export { world, characterModel, playerBody, playerHeight, walkSound, isDancing };

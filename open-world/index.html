@@ -222,7 +222,33 @@
         </div>
       </div>
     </div>
+    <!-- 注册 -->
+    <div id="registerPanel" style="display: none;">
+      <div class="settings-content register-content">
+        <div class="settings-header">
+          <h2>注册</h2>
+          <button id="closeRegisterBtn" type="button" class="close-btn">关闭 (ESC)</button>
+        </div>
+        <div class="settings-body">
+          <form id="registerForm" class="register-form">
+            <div class="settings-item register-field">
+              <label for="registerUsername">用户名</label>
+              <input id="registerUsername" name="username" type="text" autocomplete="username" required minlength="1" />
+            </div>
+            <div class="settings-item register-field">
+              <label for="registerPassword">密码</label>
+              <input id="registerPassword" name="password" type="password" autocomplete="new-password" required minlength="1" />
+            </div>
+            <div class="register-actions">
+              <button type="submit" id="registerSubmitBtn" class="save-btn">注册</button>
+            </div>
+            <p id="registerMessage" class="register-message" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </div>
     <!-- 设置按钮 -->
+    <button id="registerBtn" class="register-btn" type="button" title="注册">注册</button>
     <button id="settingsBtn" class="settings-btn" title="设置">⚙️</button>
     <button id="manualBtn" class="manual-btn" title="使用手册">?</button>
     <script type="module" src="/src/main.js"></script>

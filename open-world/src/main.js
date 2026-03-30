@@ -11,11 +11,13 @@ import plane, { planeModel, planeBody, stopPlaneSound, setPlaneState } from './p
 import house, { doorMesh, doorBody, setDoorState } from './house.js';
 import person, { personModel, personBody } from './person.js';
 import dancingMirrorHut, { updateDancingMirrorHut, dancingMirrorHutPosition } from './dancingMirrorHut.js';
+import birds, { updateBirds } from './birds.js';
 import { isNearComputer, enterComputerView, exitComputerView } from './computer.js';
 import { mapSystem, updateMapMarkers, toggleFullMap } from './map.js';
 import { initWeatherSystem, updateWeather, setWeather, WeatherType, getWeatherSystem } from './weather.js';
 import { saveGame, loadGame, hasSave, getSaveTimestamp } from './save.js';
-import { setPlayerState } from './mesh.js';
+import { setPlayerState, startPlayerDance, stopPlayerDance, isDancing } from './mesh.js';
+import { registerUser } from './api/register.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -26,6 +28,7 @@ scene.add(plane);
 scene.add(house);
 scene.add(person);
 scene.add(dancingMirrorHut);
+scene.add(birds);
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 const sun = new THREE.DirectionalLight(0xffffff, 0.8);
@@ -78,6 +81,7 @@ document.addEventListener('keydown', startBackgroundMusic, { once: true });
 // 设置面板控制
 export let isSettingsOpen = false;
 export let isManualOpen = false;
+export let isRegisterOpen = false;
 let soundEffectEnabled = true;
 let backgroundMusicEnabled = true;
 let miniMapEnabled = true;
@@ -106,7 +110,15 @@ function setSettingsFromSave(s) {
 function toggleSettings() {
   const settingsPanel = document.getElementById('settingsPanel');
   if (!settingsPanel) return;
-  
+
+  if (isRegisterOpen) {
+    isRegisterOpen = false;
+    const registerPanel = document.getElementById('registerPanel');
+    if (registerPanel) registerPanel.style.display = 'none';
+    const registerMsg = document.getElementById('registerMessage');
+    if (registerMsg) registerMsg.textContent = '';
+  }
+
   isSettingsOpen = !isSettingsOpen;
   settingsPanel.style.display = isSettingsOpen ? 'flex' : 'none';
   
@@ -123,7 +135,7 @@ function toggleSettings() {
   if (isSettingsOpen && document.pointerLockElement) {
     document.exitPointerLock();
   }
-  
+
   // 更新当前天气按钮状态
   if (isSettingsOpen) {
     updateWeatherButtonStates();
@@ -133,10 +145,51 @@ function toggleSettings() {
 function toggleManual() {
   const manualPanel = document.getElementById('manualPanel');
   if (!manualPanel) return;
+
+  if (isRegisterOpen) {
+    isRegisterOpen = false;
+    const registerPanel = document.getElementById('registerPanel');
+    if (registerPanel) registerPanel.style.display = 'none';
+    const registerMsg = document.getElementById('registerMessage');
+    if (registerMsg) registerMsg.textContent = '';
+  }
+
   isManualOpen = !isManualOpen;
   manualPanel.style.display = isManualOpen ? 'flex' : 'none';
   if (isManualOpen && document.pointerLockElement) {
     document.exitPointerLock();
+  }
+}
+
+function toggleRegister() {
+  const registerPanel = document.getElementById('registerPanel');
+  if (!registerPanel) return;
+
+  const willOpen = !isRegisterOpen;
+  if (willOpen) {
+    if (isSettingsOpen) {
+      isSettingsOpen = false;
+      const settingsPanel = document.getElementById('settingsPanel');
+      if (settingsPanel) settingsPanel.style.display = 'none';
+    }
+    if (isManualOpen) {
+      isManualOpen = false;
+      const manualPanel = document.getElementById('manualPanel');
+      if (manualPanel) manualPanel.style.display = 'none';
+    }
+  }
+
+  isRegisterOpen = !isRegisterOpen;
+  registerPanel.style.display = isRegisterOpen ? 'flex' : 'none';
+
+  if (isRegisterOpen && document.pointerLockElement) {
+    document.exitPointerLock();
+  }
+
+  const registerMsg = document.getElementById('registerMessage');
+  if (!isRegisterOpen && registerMsg) {
+    registerMsg.textContent = '';
+    registerMsg.className = 'register-message';
   }
 }
 
@@ -397,6 +450,69 @@ document.addEventListener('DOMContentLoaded', () => {
     manualPanel.addEventListener('click', (e) => e.stopPropagation());
   }
 
+  const registerPanel = document.getElementById('registerPanel');
+  const registerBtn = document.getElementById('registerBtn');
+  const closeRegisterBtn = document.getElementById('closeRegisterBtn');
+  const registerForm = document.getElementById('registerForm');
+  if (registerPanel) {
+    registerPanel.addEventListener('mousedown', (e) => e.stopPropagation());
+    registerPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
+  if (registerBtn) {
+    registerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleRegister();
+    });
+  }
+  if (closeRegisterBtn) {
+    closeRegisterBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleRegister();
+    });
+  }
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usernameEl = document.getElementById('registerUsername');
+      const passwordEl = document.getElementById('registerPassword');
+      const msgEl = document.getElementById('registerMessage');
+      const submitBtn = document.getElementById('registerSubmitBtn');
+      const username = usernameEl ? usernameEl.value.trim() : '';
+      const password = passwordEl ? passwordEl.value : '';
+      if (!username || !password) {
+        if (msgEl) {
+          msgEl.textContent = '请填写用户名和密码';
+          msgEl.className = 'register-message register-error';
+        }
+        return;
+      }
+      if (msgEl) {
+        msgEl.textContent = '';
+        msgEl.className = 'register-message';
+      }
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const data = await registerUser(username, password);
+        if (msgEl) {
+          const t = data.createdAt
+            ? new Date(data.createdAt).toLocaleString('zh-CN')
+            : '';
+          msgEl.textContent = t
+            ? `注册成功：${data.username}（id: ${data.id}）· ${t}`
+            : `注册成功：${data.username}（id: ${data.id}）`;
+          msgEl.className = 'register-message register-success';
+        }
+      } catch (err) {
+        if (msgEl) {
+          msgEl.textContent = err instanceof Error ? err.message : '注册失败';
+          msgEl.className = 'register-message register-error';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
   // 天气切换按钮
   weatherButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -477,7 +593,7 @@ const dancerDialogueData = [
     { player: "你好！", npc: "嗨～你也来看镜子呀？" },
     { player: "嗯，你跳得真好。", npc: "谢谢！我天天在这儿练，你要不要也试试？" },
     { player: "我也可以跳吗？", npc: "当然呀，我教你！很简单的。" },
-    { player: "好啊，教教我。", npc: "那你准备好哦，按 D 开始跳舞～" }
+    { player: "好啊，教教我。", npc: "那你准备好哦，按 J 开始跳舞～" }
 ];
 
 let dancerDialogueIndex = 0;
@@ -561,12 +677,14 @@ function updateViewTip() {
         } else {
             tipElement.textContent = '按 H 对话';
         }
+    } else if (isDancing) {
+        tipElement.textContent = '按 L 结束跳舞';
     } else if (isNearDancer()) {
         if (isTalkingToDancer) {
             if (dancerDialogueIndex < dancerDialogueData.length) {
                 tipElement.textContent = '按 H 继续 按 K 结束';
             } else {
-                tipElement.textContent = '按 D 开始跳舞 | 按 K 结束对话';
+                tipElement.textContent = '按 J 开始跳舞 | 按 K 结束对话';
             }
         } else {
             tipElement.textContent = '按 H 对话';
@@ -645,6 +763,7 @@ function render() {
     // 更新地图标记和绘制
     updateMapMarkers(characterModel, carModel, planeModel, personModel, camera, isCarView, isPlaneView);
     updateDancingMirrorHut();
+    updateBirds();
     mapSystem.update();
     
     // 更新天气系统
@@ -829,10 +948,27 @@ window.addEventListener('keydown', (event) => {
             } else {
                 if (dancerDialogueIndex < dancerDialogueData.length - 1) {
                     dancerDialogueIndex++;
+                } else if (dancerDialogueIndex < dancerDialogueData.length) {
+                    dancerDialogueIndex = dancerDialogueData.length; // 对话结束，显示「按 J 开始跳舞」
                 } else {
-                    dancerDialogueIndex = 0;
+                    dancerDialogueIndex = 0; // 再按 H 重新开始
                 }
             }
+        }
+    } else if (event.key === 'j' || event.key === 'J') {
+        // J 键：在女孩对话完成后开始跳舞
+        if (
+            isNearDancer() &&
+            !isPlaneView && !isCarView && !isComputerView &&
+            isTalkingToDancer &&
+            dancerDialogueIndex >= dancerDialogueData.length
+        ) {
+            startPlayerDance();
+        }
+    } else if (event.key === 'l' || event.key === 'L') {
+        // L 键：结束跳舞
+        if (isDancing) {
+            stopPlayerDance();
         }
     } else if (event.key === 'k' || event.key === 'K') {
         if (isNearPerson() && isTalking && !isPlaneView && !isCarView && !isComputerView) {
@@ -877,6 +1013,7 @@ window.addEventListener('keydown', (event) => {
     } else if (event.key === 'Escape') {
         if (isManualOpen) toggleManual();
         else if (isSettingsOpen) toggleSettings();
+        else if (isRegisterOpen) toggleRegister();
     }
 });
 

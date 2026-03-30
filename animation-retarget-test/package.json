@@ -1,0 +1,18 @@
+{
+  "name": "animation-retarget-test",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/three": "^0.183.1",
+    "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "three": "^0.183.2"
+  }
+}
