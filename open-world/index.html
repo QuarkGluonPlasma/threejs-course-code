@@ -222,8 +222,33 @@
         </div>
       </div>
     </div>
-    <!-- 注册 -->
-    <div id="registerPanel" style="display: none;">
+    <!-- 登录（同注册：HTML + hidden + CSS） -->
+    <div id="loginPanel" class="register-panel" hidden>
+      <div class="settings-content register-content">
+        <div class="settings-header">
+          <h2>登录</h2>
+          <button id="closeLoginBtn" type="button" class="close-btn">关闭 (ESC)</button>
+        </div>
+        <div class="settings-body">
+          <form id="loginForm" class="register-form">
+            <div class="settings-item register-field">
+              <label for="loginUsername">用户名</label>
+              <input id="loginUsername" name="username" type="text" autocomplete="username" required minlength="1" />
+            </div>
+            <div class="settings-item register-field">
+              <label for="loginPassword">密码</label>
+              <input id="loginPassword" name="password" type="password" autocomplete="current-password" required minlength="1" />
+            </div>
+            <div class="register-actions">
+              <button type="submit" id="loginSubmitBtn" class="load-btn">登录</button>
+            </div>
+            <p id="loginMessage" class="register-message" role="status" hidden></p>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- 注册（结构在 HTML；显示/隐藏仅用 hidden 属性 + CSS，不由 JS 创建节点） -->
+    <div id="registerPanel" class="register-panel" hidden>
       <div class="settings-content register-content">
         <div class="settings-header">
           <h2>注册</h2>
@@ -242,12 +267,13 @@
             <div class="register-actions">
               <button type="submit" id="registerSubmitBtn" class="save-btn">注册</button>
             </div>
-            <p id="registerMessage" class="register-message" role="status"></p>
+            <p id="registerMessage" class="register-message" role="status" hidden></p>
           </form>
         </div>
       </div>
     </div>
-    <!-- 设置按钮 -->
+    <!-- 顶栏：登录 / 注册 -->
+    <button id="loginBtn" class="login-btn" type="button" title="登录">登录</button>
     <button id="registerBtn" class="register-btn" type="button" title="注册">注册</button>
     <button id="settingsBtn" class="settings-btn" title="设置">⚙️</button>
     <button id="manualBtn" class="manual-btn" title="使用手册">?</button>

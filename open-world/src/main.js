@@ -18,6 +18,7 @@ import { initWeatherSystem, updateWeather, setWeather, WeatherType, getWeatherSy
 import { saveGame, loadGame, hasSave, getSaveTimestamp } from './save.js';
 import { setPlayerState, startPlayerDance, stopPlayerDance, isDancing } from './mesh.js';
 import { registerUser } from './api/register.js';
+import { loginUser } from './api/login.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -82,6 +83,33 @@ document.addEventListener('keydown', startBackgroundMusic, { once: true });
 export let isSettingsOpen = false;
 export let isManualOpen = false;
 export let isRegisterOpen = false;
+export let isLoginOpen = false;
+
+function dismissRegisterPanel() {
+  if (!isRegisterOpen) return;
+  isRegisterOpen = false;
+  const registerPanel = document.getElementById('registerPanel');
+  if (registerPanel) registerPanel.hidden = true;
+  const registerMsg = document.getElementById('registerMessage');
+  if (registerMsg) {
+    registerMsg.hidden = true;
+    registerMsg.textContent = '';
+    registerMsg.className = 'register-message';
+  }
+}
+
+function dismissLoginPanel() {
+  if (!isLoginOpen) return;
+  isLoginOpen = false;
+  const loginPanel = document.getElementById('loginPanel');
+  if (loginPanel) loginPanel.hidden = true;
+  const loginMsg = document.getElementById('loginMessage');
+  if (loginMsg) {
+    loginMsg.hidden = true;
+    loginMsg.textContent = '';
+    loginMsg.className = 'register-message';
+  }
+}
 let soundEffectEnabled = true;
 let backgroundMusicEnabled = true;
 let miniMapEnabled = true;
@@ -111,13 +139,8 @@ function toggleSettings() {
   const settingsPanel = document.getElementById('settingsPanel');
   if (!settingsPanel) return;
 
-  if (isRegisterOpen) {
-    isRegisterOpen = false;
-    const registerPanel = document.getElementById('registerPanel');
-    if (registerPanel) registerPanel.style.display = 'none';
-    const registerMsg = document.getElementById('registerMessage');
-    if (registerMsg) registerMsg.textContent = '';
-  }
+  dismissRegisterPanel();
+  dismissLoginPanel();
 
   isSettingsOpen = !isSettingsOpen;
   settingsPanel.style.display = isSettingsOpen ? 'flex' : 'none';
@@ -146,13 +169,8 @@ function toggleManual() {
   const manualPanel = document.getElementById('manualPanel');
   if (!manualPanel) return;
 
-  if (isRegisterOpen) {
-    isRegisterOpen = false;
-    const registerPanel = document.getElementById('registerPanel');
-    if (registerPanel) registerPanel.style.display = 'none';
-    const registerMsg = document.getElementById('registerMessage');
-    if (registerMsg) registerMsg.textContent = '';
-  }
+  dismissRegisterPanel();
+  dismissLoginPanel();
 
   isManualOpen = !isManualOpen;
   manualPanel.style.display = isManualOpen ? 'flex' : 'none';
@@ -167,6 +185,7 @@ function toggleRegister() {
 
   const willOpen = !isRegisterOpen;
   if (willOpen) {
+    dismissLoginPanel();
     if (isSettingsOpen) {
       isSettingsOpen = false;
       const settingsPanel = document.getElementById('settingsPanel');
@@ -180,7 +199,7 @@ function toggleRegister() {
   }
 
   isRegisterOpen = !isRegisterOpen;
-  registerPanel.style.display = isRegisterOpen ? 'flex' : 'none';
+  registerPanel.hidden = !isRegisterOpen;
 
   if (isRegisterOpen && document.pointerLockElement) {
     document.exitPointerLock();
@@ -188,8 +207,43 @@ function toggleRegister() {
 
   const registerMsg = document.getElementById('registerMessage');
   if (!isRegisterOpen && registerMsg) {
+    registerMsg.hidden = true;
     registerMsg.textContent = '';
     registerMsg.className = 'register-message';
+  }
+}
+
+function toggleLogin() {
+  const loginPanel = document.getElementById('loginPanel');
+  if (!loginPanel) return;
+
+  const willOpen = !isLoginOpen;
+  if (willOpen) {
+    dismissRegisterPanel();
+    if (isSettingsOpen) {
+      isSettingsOpen = false;
+      const settingsPanel = document.getElementById('settingsPanel');
+      if (settingsPanel) settingsPanel.style.display = 'none';
+    }
+    if (isManualOpen) {
+      isManualOpen = false;
+      const manualPanel = document.getElementById('manualPanel');
+      if (manualPanel) manualPanel.style.display = 'none';
+    }
+  }
+
+  isLoginOpen = !isLoginOpen;
+  loginPanel.hidden = !isLoginOpen;
+
+  if (isLoginOpen && document.pointerLockElement) {
+    document.exitPointerLock();
+  }
+
+  const loginMsg = document.getElementById('loginMessage');
+  if (!isLoginOpen && loginMsg) {
+    loginMsg.hidden = true;
+    loginMsg.textContent = '';
+    loginMsg.className = 'register-message';
   }
 }
 
@@ -481,12 +535,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = passwordEl ? passwordEl.value : '';
       if (!username || !password) {
         if (msgEl) {
+          msgEl.hidden = false;
           msgEl.textContent = '请填写用户名和密码';
           msgEl.className = 'register-message register-error';
         }
         return;
       }
       if (msgEl) {
+        msgEl.hidden = true;
         msgEl.textContent = '';
         msgEl.className = 'register-message';
       }
@@ -494,6 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const data = await registerUser(username, password);
         if (msgEl) {
+          msgEl.hidden = false;
           const t = data.createdAt
             ? new Date(data.createdAt).toLocaleString('zh-CN')
             : '';
@@ -504,7 +561,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (err) {
         if (msgEl) {
+          msgEl.hidden = false;
           msgEl.textContent = err instanceof Error ? err.message : '注册失败';
+          msgEl.className = 'register-message register-error';
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
+  const loginPanel = document.getElementById('loginPanel');
+  const loginBtn = document.getElementById('loginBtn');
+  const closeLoginBtn = document.getElementById('closeLoginBtn');
+  const loginForm = document.getElementById('loginForm');
+  if (loginPanel) {
+    loginPanel.addEventListener('mousedown', (e) => e.stopPropagation());
+    loginPanel.addEventListener('click', (e) => e.stopPropagation());
+  }
+  if (loginBtn) {
+    loginBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleLogin();
+    });
+  }
+  if (closeLoginBtn) {
+    closeLoginBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleLogin();
+    });
+  }
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const usernameEl = document.getElementById('loginUsername');
+      const passwordEl = document.getElementById('loginPassword');
+      const msgEl = document.getElementById('loginMessage');
+      const submitBtn = document.getElementById('loginSubmitBtn');
+      const username = usernameEl ? usernameEl.value.trim() : '';
+      const password = passwordEl ? passwordEl.value : '';
+      if (!username || !password) {
+        if (msgEl) {
+          msgEl.hidden = false;
+          msgEl.textContent = '请填写用户名和密码';
+          msgEl.className = 'register-message register-error';
+        }
+        return;
+      }
+      if (msgEl) {
+        msgEl.hidden = true;
+        msgEl.textContent = '';
+        msgEl.className = 'register-message';
+      }
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        const data = await loginUser(username, password);
+        if (data.accessToken) {
+          localStorage.setItem('accessToken', data.accessToken);
+        }
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user));
+        }
+        if (msgEl) {
+          msgEl.hidden = false;
+          const u = data.user;
+          msgEl.textContent = u
+            ? `登录成功：${u.username}（id: ${u.id}）`
+            : '登录成功';
+          msgEl.className = 'register-message register-success';
+        }
+      } catch (err) {
+        if (msgEl) {
+          msgEl.hidden = false;
+          msgEl.textContent = err instanceof Error ? err.message : '登录失败';
           msgEl.className = 'register-message register-error';
         }
       } finally {
@@ -1013,6 +1142,7 @@ window.addEventListener('keydown', (event) => {
     } else if (event.key === 'Escape') {
         if (isManualOpen) toggleManual();
         else if (isSettingsOpen) toggleSettings();
+        else if (isLoginOpen) toggleLogin();
         else if (isRegisterOpen) toggleRegister();
     }
 });

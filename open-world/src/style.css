@@ -482,8 +482,9 @@ body {
   min-height: 20px;
 }
 
-/* 注册面板 */
-#registerPanel {
+/* 登录 / 注册面板：默认 hidden；展开时 flex 居中 */
+#loginPanel.register-panel,
+#registerPanel.register-panel {
   position: fixed;
   top: 0;
   left: 0;
@@ -491,10 +492,14 @@ body {
   height: 100%;
   background: rgba(0, 0, 0, 0.8);
   z-index: 3000;
-  display: flex;
   justify-content: center;
   align-items: center;
   pointer-events: auto;
+}
+
+#loginPanel.register-panel:not([hidden]),
+#registerPanel.register-panel:not([hidden]) {
+  display: flex;
 }
 
 .register-content {
@@ -541,6 +546,38 @@ body {
 
 .register-message.register-error {
   color: #feb2b2;
+}
+
+#loginMessage:not([hidden]),
+#registerMessage:not([hidden]) {
+  display: block;
+}
+
+/* 登录按钮（顶栏） */
+.login-btn {
+  position: fixed;
+  top: 20px;
+  right: 200px;
+  min-width: 50px;
+  height: 50px;
+  padding: 0 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.login-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
 }
 
 /* 注册按钮（顶栏） */
