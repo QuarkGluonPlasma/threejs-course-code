@@ -9,6 +9,12 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      // Socket.IO 与 Nest /world 命名空间（path 默认 /socket.io）
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        ws: true
       }
     }
   },

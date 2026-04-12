@@ -19,11 +19,14 @@ import { saveGame, loadGame, hasSave, getSaveTimestamp } from './save.js';
 import { setPlayerState, startPlayerDance, stopPlayerDance, isDancing } from './mesh.js';
 import { registerUser } from './api/register.js';
 import { loginUser } from './api/login.js';
+import { connectWorld } from './worldSync.js';
+import { getRemotePlayersRoot } from './remotePlayers.js';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 
 scene.add(mesh);
+scene.add(getRemotePlayersRoot());
 scene.add(car);
 scene.add(plane);
 scene.add(house);
@@ -622,6 +625,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.user) {
           localStorage.setItem('user', JSON.stringify(data.user));
         }
+        if (data.accessToken) {
+          connectWorld(data.accessToken);
+        }
         if (msgEl) {
           msgEl.hidden = false;
           const u = data.user;
@@ -906,6 +912,10 @@ loadCompletePromise.then(() => {
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) overlay.classList.add('hidden');
     render();
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      connectWorld(token);
+    }
 });
 
 // 窗口大小调整处理

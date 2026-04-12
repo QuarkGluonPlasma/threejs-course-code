@@ -3,6 +3,8 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 import { CSS2DObject } from 'three/examples/jsm/Addons.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
 import { camera, isCarView, isPlaneView, isComputerView, isTalking, isSettingsOpen, isManualOpen } from './main';
+import { worldSyncTick } from './worldSync.js';
+import { updateRemotePlayers } from './remotePlayers.js';
 import * as CANNON from 'cannon-es';
 import { loadingManager } from './loading.js';
 
@@ -493,11 +495,30 @@ function animate() {
   if (danceMixer && isDancing) {
     danceMixer.update(dt);
   }
+  updateRemotePlayers(dt);
 
   if (characterModel) {
     characterModel.position.copy(playerBody.position);
     characterModel.position.y -= playerHeight / 2;
   }
+
+  const canWorldSync =
+    characterModel &&
+    !isCarView &&
+    !isPlaneView &&
+    !isComputerView;
+  worldSyncTick(
+    dt,
+    () => ({
+      position: {
+        x: playerBody.position.x,
+        y: playerBody.position.y,
+        z: playerBody.position.z,
+      },
+      rotationY: characterModel.rotation.y,
+    }),
+    canWorldSync
+  );
 }
 
 animate();
