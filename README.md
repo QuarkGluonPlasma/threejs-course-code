@@ -298,5 +298,6 @@ npx live-server 起个静态服务就可以访问
 
 [产品展示网站](./product-display/)
 
+[shader 入门](./shader-playground/)
 
 
