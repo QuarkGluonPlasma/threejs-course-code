@@ -300,4 +300,4 @@ npx live-server 起个静态服务就可以访问
 
 [shader 入门](./shader-playground/)
 
-
+[3d 全景看房](./3d-panoramic-house-tour/)
