@@ -4,6 +4,8 @@
 
 后续更多内容关注 #神光的幸福生活 公众号
 
+![](./qrcode.jpg)
+
 npx live-server 起个静态服务就可以访问
 
 如果是 vite 项目，那就先 npm install 再 npm run dev
